@@ -1,6 +1,7 @@
 import { ApiConfig } from "../apiConfig/ApiConfig";
 import { ConsoleLogs } from "../../utils/ConsoleLogs";
 import { ApiCallPost } from "../apiConfig/ApiCall";
+import { ApiCallGET } from "../apiConfig/ApiCall";
 
 const TAG = 'AuthService';
 
@@ -11,7 +12,7 @@ const AuthService = {
         const url = baseUrl + login;
 
         const params = {
-            email: email,
+            emailId: email,
             password: password,
         };
 
@@ -27,15 +28,38 @@ const AuthService = {
         return ApiCallPost(url, params, headers);
 
     },
+
     getTransactions: async () => {
     const token = localStorage.getItem("token");
-    const { baseTrans, userTransactions } = ApiConfig;
+    const { baseUrl, userTransactions } = ApiConfig;
 
-    const url = baseTrans + userTransactions;
+    const url = baseUrl + userTransactions;
 
     const params = {};
 
     ConsoleLogs(TAG + ', getTransactions', `url : ' + ${url}`);
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token
+    };
+
+    return ApiCallGET(url, params, headers);
+  },
+
+  getActionTrans: async (id, status, refid) => {
+    const token = localStorage.getItem("token");
+    const { baseUrl, getActionTrans } = ApiConfig;
+
+    const url = baseUrl + getActionTrans;
+
+    const params = {
+        tid: id,
+        st: status,
+        tref: refid,
+    };
+
+    ConsoleLogs(TAG + ', getActionTrans', `url : ' + ${url}`);
 
     const headers = {
       'Content-Type': 'application/json',

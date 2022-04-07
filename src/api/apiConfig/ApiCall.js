@@ -20,3 +20,19 @@ export const ApiCallPost = async (url, parameters, headers) => {
     }
 
 };
+
+export const ApiCallGET = async (url, headers) => {
+    try {
+        const response = await axios.get(url, {headers: headers});
+        ConsoleLogs(
+            TAG + ', ApiCallGET', 
+            `apiDebug,response: ${JSON.stringify(response.data)}`
+        );
+        return response.data;
+    }catch(error){
+        ConsoleLogs(
+            TAG + ',ApiCallGET',`apiDebug, response error: ${JSON.stringify(error)}`,
+        );
+        return error;
+    }
+};

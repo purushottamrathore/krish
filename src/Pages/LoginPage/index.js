@@ -25,21 +25,24 @@ const LoginPage = () => {
     const handleLogin = async (email, password) => {
         LoaderHelper.loaderStatus(true);
         await AuthService.login(email, password).then(async result => {
-            if (result.message === "Login Success") {
+            if (Object.keys(result).length > 0) {
                 try {
                     LoaderHelper.loaderStatus(false);
-                    localStorage.setItem("token", result.authRes.token);
-                    alertSuccessMessage(result.message);
+                    localStorage.setItem("token", result.token);
+                    localStorage.setItem("name", result.firstName);
+                    localStorage.setItem("email", result.emailId);
+                    alertSuccessMessage("Login Success");
                     navigate('/transaction');
 
                 } catch (error) {
                     LoaderHelper.loaderStatus(false);
                     alertErrorMessage(error);
+                    console.log(error, "error");
                 }
             } else {
                 LoaderHelper.loaderStatus(false);
                 // const errorMessage = result.message;
-                alertErrorMessage(result.message);
+                alertErrorMessage("Login Failed!!");
             }
 
 
@@ -55,7 +58,7 @@ const LoginPage = () => {
                             <div className="col-xl-5 col-lg-6 col-md-8 col-sm-11">
                                 <div className="card my-5">
                                     <div className="card-body p-5 text-center">
-                                        <img src="assets/img/logo_footer.png" className="img-fluid" />
+                                        <h2>Admin Panel</h2>
                                     </div>
                                     <hr className="my-0" />
                                     <div className="card-body p-5">

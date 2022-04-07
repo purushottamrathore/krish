@@ -1,14 +1,18 @@
 import React from "react";
 
 const Header = () => {
+    const emailId = localStorage.getItem("email");
+    const name = localStorage.getItem("name");
     return (
         <>
         <nav className="topnav navbar navbar-expand shadow justify-content-between justify-content-sm-start navbar-light bg-white" id="sidenavAccordion">
 
-            <button className="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button>
+            {/* <button className="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button> */}
 
-            <a className="navbar-brand pe-3 ps-4 ps-lg-3" href="/dashboard">
-                <img src="assets/img/logo_footer.png" className="img-fluid" />
+            <a className="navbar-brand pe-3 ps-4 ps-lg-3" href="#">
+                {/* <img src="assets/img/logo_footer.png" className="img-fluid" /> */}
+                <h3>Admin Panel</h3>
+
             </a>
 
 
@@ -56,8 +60,8 @@ const Header = () => {
                         <h6 className="dropdown-header d-flex align-items-center">
                             <img className="dropdown-user-img" src="assets/img/illustrations/profiles/profile-1.png" />
                             <div className="dropdown-user-details">
-                                <div className="dropdown-user-details-name">Valerie Luna</div>
-                                <div className="dropdown-user-details-email"><a href="#" className="__cf_email__" >admin@bloomex.oi</a></div>
+                                <div className="dropdown-user-details-name">{name}</div>
+                                <div className="dropdown-user-details-email"><a href="#" className="__cf_email__" >{emailId}</a></div>
                             </div>
                         </h6>
                         <div className="dropdown-divider"></div>

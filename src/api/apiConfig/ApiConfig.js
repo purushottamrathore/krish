@@ -1,15 +1,13 @@
-const appUrl = 'http://34.226.123.113:3002';
+const appUrl = 'https://brandmart.herokuapp.com';
 
 export const ApiConfig = {
     // =========EndPoints==========
-    login: 'auth/login',
-    userTransactions: "userTransactions",
+    login: 'login',
+    userTransactions: "getdata",
+    getActionTrans: "updatetrans",
     
 
-    baseUrl: `${appUrl}/`,
-    baseTrans: `${appUrl}/trans/`,
-
-    
+    baseUrl: `${appUrl}/api/`,
   };
   
 
