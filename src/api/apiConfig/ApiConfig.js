@@ -5,6 +5,7 @@ export const ApiConfig = {
     login: 'login',
     userTransactions: "getdata",
     getActionTrans: "updatetrans",
+    getCheckSelect: "updatemultitrans",
     
 
     baseUrl: `${appUrl}/api/`,

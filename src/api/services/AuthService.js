@@ -69,6 +69,27 @@ const AuthService = {
     return ApiCallPost(url, params, headers);
   },
 
+  getCheckSelect: async (chId, refId) => {
+    const token = localStorage.getItem("token");
+    const { baseUrl, getCheckSelect } = ApiConfig;
+
+    const url = baseUrl + getCheckSelect;
+
+    const params = {
+        tids: chId,
+        tref: refId,
+    };
+
+    ConsoleLogs(TAG + ', getCheckSelect', `url : ' + ${url}`);
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token
+    };
+
+    return ApiCallPost(url, params, headers);
+  },
+
 };
 
 export default AuthService;
