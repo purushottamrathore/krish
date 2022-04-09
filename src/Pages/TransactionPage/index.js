@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { DataTable } from 'primereact/datatable';
-import {Column} from 'primereact/column';
-import * as moment from 'moment';
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import * as moment from "moment";
 import { CSVLink } from "react-csv";
-import "primereact/resources/primereact.min.css";                  //core css
-import "primeicons/primeicons.css";     
+import "primereact/resources/primereact.min.css"; //core css
+import "primeicons/primeicons.css";
 import Header from "../../customComponent/Header";
 import AuthService from "../../api/services/AuthService";
 import { $ } from "react-jquery-plugin";
@@ -25,19 +25,19 @@ const TransactionPage = () => {
   let [pendData, setPendData] = useState([]);
   const [product, setProduct] = useState([]);
   let [success, setSuccess] = useState([]);
-  const[activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState("pending");
 
   const headers = [
-  { label: "Transaction Id(Vendor)", key: "transId" },
-  { label: "Date", key: "createdAt" },
-  { label: "Product", key: "product" },
-  { label: "Customer", key: "customer" },
-  { label: "Amount", key: "amount" },
-  { label: "Status", key: "status" },
-  { label: "Our Referrance No", key: "refNo" },
-  { label: "Wallet", key: "wallet" },
-  { label: "Route", key: "route" },
-];
+    { label: "Transaction Id(Vendor)", key: "transId" },
+    { label: "Date", key: "createdAt" },
+    { label: "Product", key: "product" },
+    { label: "Customer", key: "customer" },
+    { label: "Amount", key: "amount" },
+    { label: "Status", key: "status" },
+    { label: "Our Referrance No", key: "refNo" },
+    { label: "Wallet", key: "wallet" },
+    { label: "Route", key: "route" },
+  ];
 
   useEffect(() => {
     handleTransaction();
@@ -47,14 +47,18 @@ const TransactionPage = () => {
 
   useEffect(() => {
     if (transactionsList && Object.keys(transactionsList).length > 0) {
-            let data = transactionsList.filter(item => item?.status?.toLowerCase() === "pending");
-            setPendData(data);
-        } 
-            let data = transactionsList.filter(item => item?.status?.toLowerCase() === "success");
-            setSuccess(data);
+      let data = transactionsList.filter(
+        (item) => item?.status?.toLowerCase() === "pending"
+      );
+      setPendData(data);
+    }
+    let data = transactionsList.filter(
+      (item) => item?.status?.toLowerCase() === "success"
+    );
+    setSuccess(data);
 
-        console.log(transactionsList, 'lastJsonMessagerathore');
-    }, [transactionsList]);
+    console.log(transactionsList, "lastJsonMessagerathore");
+  }, [transactionsList]);
 
   const handleTransaction = async () => {
     LoaderHelper.loaderStatus(true);
@@ -76,9 +80,6 @@ const TransactionPage = () => {
     });
   };
 
-  
-  
-
   const handleActionTrans = async (id, status, refId) => {
     LoaderHelper.loaderStatus(true);
     await AuthService.getActionTrans(id, status, refId).then(async (result) => {
@@ -87,6 +88,7 @@ const TransactionPage = () => {
         try {
           LoaderHelper.loaderStatus(false);
           $("#refList").modal("hide");
+          handleTransaction();
         } catch (error) {
           LoaderHelper.loaderStatus(false);
           //alertErrorMessage(error);
@@ -109,8 +111,7 @@ const TransactionPage = () => {
     let a = checkList;
     a.push(id);
     console.log(checkList, "checklist");
-
-  }
+  };
 
   const handleCheckSelect = async (chId, refId) => {
     LoaderHelper.loaderStatus(true);
@@ -119,7 +120,8 @@ const TransactionPage = () => {
       if (result.msg === "done") {
         try {
           LoaderHelper.loaderStatus(false);
-          $("#refList").modal("hide");
+          $("#checkList").modal("hide");
+          handleTransaction();
         } catch (error) {
           LoaderHelper.loaderStatus(false);
           //alertErrorMessage(error);
@@ -135,14 +137,16 @@ const TransactionPage = () => {
 
   function dateFilter(startDate, endDate, type1) {
     let type;
-    type = transactionsList.filter(e => {
-      if(e.status.toLowerCase() == type1) {
+    type = transactionsList.filter((e) => {
+      if (e.status.toLowerCase() == type1) {
         console.log(type1);
         console.log(startDate, new Date(endDate), new Date(e.createdAt));
-        return (new Date(e.createdAt) >= new Date(startDate) && new Date(e.createdAt) <= new Date(endDate).setHours(24,0,0,0))
+        return (
+          new Date(e.createdAt) >= new Date(startDate) &&
+          new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
+        );
       }
       //console.log(e, new Date(e.WorkDescription.startDate), this.filterStartDate);
-      
     });
     type1 == "pending" ? setPendData(type) : setSuccess(type);
     console.log(type, pendData);
@@ -150,7 +154,7 @@ const TransactionPage = () => {
 
   function productFilter(product, type1) {
     let type;
-    type = transactionsList.filter(e => (e?.product?.toLowerCase() == product) );
+    type = transactionsList.filter((e) => e?.product?.toLowerCase() == product);
     type1 == "pending" ? setPendData(type) : setSuccess(type);
     console.log(type, pendData);
   }
@@ -231,62 +235,88 @@ const TransactionPage = () => {
                       <button
                         class="btn btn-indigo   btn-block w-100"
                         type="button"
-                        onClick={() => dateFilter(startDate, endDate, activeTab)}
+                        onClick={() =>
+                          dateFilter(startDate, endDate, activeTab)
+                        }
                       >
                         Search
                       </button>
                     </div>
+                  </div>
+                  <div className="mt-2  col">
+                    <button
+                      class="btn btn-indigo   btn-block w-100"
+                      type="button"
+                      onClick={() => handleTransaction()}
+                    >
+                      Reset
+                    </button>
                   </div>
                 </div>
               </form>
             </div>
 
             <div className="card mb-4">
-                  <div class="card-header">Transactions</div>
-                  <div className="card-body">
+              <div class="card-header">Transactions</div>
+              <div className="card-body">
+                <ul
+                  className="nav nav-tabs das_tabs"
+                  id="das_tabs"
+                  role="tablist"
+                >
+                  <li className="nav-item" role="presentation">
+                    <button
+                      className="nav-link active"
+                      id="Favourite-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#Favourite"
+                      type="button"
+                      role="tab"
+                      aria-controls="Favourite"
+                      aria-selected="true"
+                      onClick={() => setActiveTab("pending")}
+                    >
+                      Pending
+                    </button>
+                  </li>
+                  <li className="nav-item" role="presentation">
+                    <button
+                      className="nav-link"
+                      id="Spot-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#Spot"
+                      type="button"
+                      role="tab"
+                      aria-controls="Spot"
+                      aria-selected="false"
+                      onClick={() => setActiveTab("success")}
+                    >
+                      Transfer History
+                    </button>
+                  </li>
+                </ul>
+                <div className="tab-content" id="myTabContent">
+                  <div
+                    className="tab-pane fade show active"
+                    id="Favourite"
+                    role="tabpanel"
+                    aria-labelledby="Favourite-tab"
+                  >
+                    <CSVLink
+                      data={pendData}
+                      class="btn btn-indigo   btn-block m-2"
+                      headers={headers}
+                      filename={`pendingData-${new Date()}.csv`}
+                      style={{ float: "right" }}
+                    >
+                      Download me
+                    </CSVLink>
 
-            <ul className="nav nav-tabs das_tabs" id="das_tabs" role="tablist">
-              <li className="nav-item" role="presentation">
-                <button
-                  className="nav-link active"
-                  id="Favourite-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#Favourite"
-                  type="button"
-                  role="tab"
-                  aria-controls="Favourite"
-                  aria-selected="true"
-                  onClick={() => setActiveTab("pending")}
-                >
-                  Pending
-                </button>
-              </li>
-              <li className="nav-item" role="presentation">
-                <button
-                  className="nav-link"
-                  id="Spot-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#Spot"
-                  type="button"
-                  role="tab"
-                  aria-controls="Spot"
-                  aria-selected="false"
-                  onClick={() => setActiveTab("success")}
-                >
-                  Transfer History
-                </button>
-              </li>
-            </ul>
-            <div className="tab-content" id="myTabContent">
-              <div
-                className="tab-pane fade show active"
-                id="Favourite"
-                role="tabpanel"
-                aria-labelledby="Favourite-tab"
-              >
-                <CSVLink data={pendData} class="btn btn-indigo   btn-block m-2" headers={headers} filename={`pendingData-${new Date()}.csv`} style={{"float": "right"}}>Download me</CSVLink>
-                
-                    <table className="table table-bordered" width="100%" id="myTable">
+                    <table
+                      className="table table-bordered"
+                      width="100%"
+                      id="myTable"
+                    >
                       <thead>
                         <tr>
                           <th>Select</th>
@@ -304,7 +334,7 @@ const TransactionPage = () => {
                       </thead>
                       <tfoot>
                         <tr>
-                        <th>Select</th>
+                          <th>Select</th>
                           <th>Transaction Id(Vendor)</th>
                           <th>Date</th>
                           <th>Product</th>
@@ -321,9 +351,16 @@ const TransactionPage = () => {
                         {pendData.length > 0
                           ? pendData.map((item, index) => (
                               <tr key={index}>
-                                <td><input type="checkbox" onClick={() => handleCheckTrans(item?._id)}/></td>
+                                <td>
+                                  <input
+                                    type="checkbox"
+                                    onClick={() => handleCheckTrans(item?._id)}
+                                  />
+                                </td>
                                 <td>{item?.transId}</td>
-                                <td>{moment(item?.createdAt).format('DD/MM/YYYY')}</td>
+                                <td>
+                                  {moment(item?.createdAt).format("DD/MM/YYYY")}
+                                </td>
                                 <td>{item?.product}</td>
                                 <td>{item?.customer}</td>
                                 <td>{item?.amount}</td>
@@ -361,18 +398,36 @@ const TransactionPage = () => {
                       </tbody>
                     </table>
 
-                    <button class="btn btn-indigo   btn-block" type="button"  data-bs-toggle="modal" data-bs-target="#checkList">Submit</button>
+                    <button
+                      class="btn btn-indigo   btn-block"
+                      type="button"
+                      data-bs-toggle="modal"
+                      data-bs-target="#checkList"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                  <div
+                    className="tab-pane fade"
+                    id="Spot"
+                    role="tabpanel"
+                    aria-labelledby="Spot-tab"
+                  >
+                    <CSVLink
+                      data={success}
+                      class="btn btn-indigo   btn-block m-2"
+                      headers={headers}
+                      filename={`transList-${new Date()}.csv`}
+                      style={{ float: "right" }}
+                    >
+                      Download me
+                    </CSVLink>
 
-              </div>    
-              <div
-                className="tab-pane fade"
-                id="Spot"
-                role="tabpanel"
-                aria-labelledby="Spot-tab"
-              >
-                <CSVLink data={success} class="btn btn-indigo   btn-block m-2" headers={headers} filename={`transList-${new Date()}.csv`} style={{"float": "right"}}>Download me</CSVLink>
-
-                    <table className="table table-bordered" id="myTable" width="100%">
+                    <table
+                      className="table table-bordered"
+                      id="myTable"
+                      width="100%"
+                    >
                       <thead>
                         <tr>
                           <th>Sr.</th>
@@ -391,7 +446,7 @@ const TransactionPage = () => {
                         <tr>
                           <th>Sr.</th>
                           <th>Transaction Id(Vendor)</th>
-                         <th>Date</th>
+                          <th>Date</th>
                           <th>Operator Name</th>
                           <th>Customer</th>
                           <th>Amount</th>
@@ -407,7 +462,9 @@ const TransactionPage = () => {
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{item?.transId}</td>
-                                <td>{moment(item?.createdAt).format('DD/MM/YYYY')}</td>
+                                <td>
+                                  {moment(item?.createdAt).format("DD/MM/YYYY")}
+                                </td>
                                 <td>{item?.product}</td>
                                 <td>{item?.customer}</td>
                                 <td>{item?.amount}</td>
@@ -420,13 +477,10 @@ const TransactionPage = () => {
                           : undefined}
                       </tbody>
                     </table>
-                  
-            </div>
-
-            </div>
+                  </div>
                 </div>
               </div>
-
+            </div>
           </div>
         </main>
       </div>
