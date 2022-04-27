@@ -15,6 +15,7 @@ import {
 import LoaderHelper from "../../customComponent/Loading/LoaderHelper";
 
 const TransactionPage = () => {
+  const uType = localStorage.getItem("uType");
   const [transactionsList, setTransactionsList] = useState([]);
   const [refId, setRefId] = useState("");
   const [tid, setTid] = useState("");
@@ -329,7 +330,7 @@ const TransactionPage = () => {
                           <th>Our Referrance No.</th>
                           <th>Wallet</th>
                           <th>Route</th>
-                          <th>Action</th>
+                          {uType == 1 ? <th>Action</th> : undefined}
                         </tr>
                       </thead>
                       <tfoot>
@@ -344,7 +345,7 @@ const TransactionPage = () => {
                           <th>Our Referrance No.</th>
                           <th>Wallet</th>
                           <th>Route</th>
-                          <th>Action</th>
+                          {uType == 1 ? <th>Action</th> : undefined}
                         </tr>
                       </tfoot>
                       <tbody>
@@ -368,30 +369,35 @@ const TransactionPage = () => {
                                 <td>{item?.refNo}</td>
                                 <td>{item?.wallet}</td>
                                 <td>{item?.route}</td>
-                                <td>
-                                  <button
-                                    class="btn btn-success btn-sm qwer"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#refList"
-                                    onClick={() =>
-                                      handleSaveData(item?._id, item?.status)
-                                    }
-                                  >
-                                    Approve
-                                  </button>
+                                {uType == 1 ? (
                                   <td>
                                     <button
-                                      className="btn btn-danger btn-sm mt-1"
+                                      class="btn btn-success btn-sm qwer"
                                       data-bs-toggle="modal"
                                       data-bs-target="#refList"
                                       onClick={() =>
                                         handleSaveData(item?._id, item?.status)
                                       }
                                     >
-                                      Reject
+                                      Approve
                                     </button>
+                                    <td>
+                                      <button
+                                        className="btn btn-danger btn-sm mt-1"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#refList"
+                                        onClick={() =>
+                                          handleSaveData(
+                                            item?._id,
+                                            item?.status
+                                          )
+                                        }
+                                      >
+                                        Reject
+                                      </button>
+                                    </td>
                                   </td>
-                                </td>
+                                ) : undefined}
                               </tr>
                             ))
                           : undefined}

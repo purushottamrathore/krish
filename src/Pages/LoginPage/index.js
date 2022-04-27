@@ -30,9 +30,10 @@ const LoginPage = () => {
       if (result.status) {
         try {
           LoaderHelper.loaderStatus(false);
-          localStorage.setItem("token", result.token);
-          localStorage.setItem("name", result.firstName);
-          localStorage.setItem("email", result.emailId);
+          localStorage.setItem("token", result?.resp?.token);
+          localStorage.setItem("name", result?.resp?.firstName);
+          localStorage.setItem("email", result?.resp?.emailId);
+          localStorage.setItem("uType", result?.resp?.uType);
           alertSuccessMessage("Login Success");
           navigate("/transaction");
         } catch (error) {
