@@ -47,7 +47,7 @@ const AuthService = {
     return ApiCallGET(url, params, headers);
   },
 
-  getActionTrans: async (id, status, refid) => {
+  getActionTrans: async (id, transId, status, refId) => {
     const token = localStorage.getItem("token");
     const { baseUrl, getActionTrans } = ApiConfig;
 
@@ -55,8 +55,10 @@ const AuthService = {
 
     const params = {
       tid: id,
+      transId: transId,
       st: status,
-      tref: refid,
+      transId: transId,
+      tref: refId,
     };
 
     ConsoleLogs(TAG + ", getActionTrans", `url : ' + ${url}`);

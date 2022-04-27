@@ -19,6 +19,7 @@ const TransactionPage = () => {
   const [transactionsList, setTransactionsList] = useState([]);
   const [refId, setRefId] = useState("");
   const [tid, setTid] = useState("");
+  const [transId, setTransId] = useState("");
   const [status, setStatus] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -49,7 +50,9 @@ const TransactionPage = () => {
   useEffect(() => {
     if (transactionsList && Object.keys(transactionsList).length > 0) {
       let data = transactionsList.filter(
-        (item) => item?.status?.toLowerCase() === "pending"
+        (item) =>
+          item?.status?.toLowerCase() === "pending" ||
+          item?.status?.toLowerCase() === "inprogress"
       );
       setPendData(data);
     }
@@ -81,30 +84,34 @@ const TransactionPage = () => {
     });
   };
 
-  const handleActionTrans = async (id, status, refId) => {
+  const handleActionTrans = async (id, transId, status, refId) => {
     LoaderHelper.loaderStatus(true);
-    await AuthService.getActionTrans(id, status, refId).then(async (result) => {
-      //console.log(result.data, 'getTransactions');
-      if (result) {
-        try {
+    await AuthService.getActionTrans(id, transId, status, refId).then(
+      async (result) => {
+        //console.log(result.data, 'getTransactions');
+        if (result) {
+          try {
+            LoaderHelper.loaderStatus(false);
+            setRefId("");
+            $("#refList").modal("hide");
+            handleTransaction();
+          } catch (error) {
+            LoaderHelper.loaderStatus(false);
+            //alertErrorMessage(error);
+            //console.log('error', `${error}`);
+          }
+        } else {
           LoaderHelper.loaderStatus(false);
-          $("#refList").modal("hide");
-          handleTransaction();
-        } catch (error) {
-          LoaderHelper.loaderStatus(false);
-          //alertErrorMessage(error);
-          //console.log('error', `${error}`);
+          //alertErrorMessage(result.message);
         }
-      } else {
-        LoaderHelper.loaderStatus(false);
-        //alertErrorMessage(result.message);
       }
-    });
+    );
   };
 
-  const handleSaveData = (id, status) => {
+  const handleSaveData = (id, transId, status) => {
     setTid(id);
     setStatus(status);
+    setTransId(transId);
   };
 
   const handleCheckTrans = (id) => {
@@ -320,7 +327,7 @@ const TransactionPage = () => {
                     >
                       <thead>
                         <tr>
-                          <th>Select</th>
+                          {uType == 1 ? <th>Select</th> : undefined}
                           <th>Transaction Id(Vendor)</th>
                           <th>Date</th>
                           <th>Product</th>
@@ -335,7 +342,7 @@ const TransactionPage = () => {
                       </thead>
                       <tfoot>
                         <tr>
-                          <th>Select</th>
+                          {uType == 1 ? <th>Select</th> : undefined}
                           <th>Transaction Id(Vendor)</th>
                           <th>Date</th>
                           <th>Product</th>
@@ -352,12 +359,17 @@ const TransactionPage = () => {
                         {pendData.length > 0
                           ? pendData.map((item, index) => (
                               <tr key={index}>
-                                <td>
-                                  <input
-                                    type="checkbox"
-                                    onClick={() => handleCheckTrans(item?._id)}
-                                  />
-                                </td>
+                                {uType == 1 ? (
+                                  <td>
+                                    <input
+                                      type="checkbox"
+                                      onClick={() =>
+                                        handleCheckTrans(item?._id)
+                                      }
+                                    />
+                                  </td>
+                                ) : undefined}
+
                                 <td>{item?.transId}</td>
                                 <td>
                                   {moment(item?.createdAt).format("DD/MM/YYYY")}
@@ -376,7 +388,11 @@ const TransactionPage = () => {
                                       data-bs-toggle="modal"
                                       data-bs-target="#refList"
                                       onClick={() =>
-                                        handleSaveData(item?._id, item?.status)
+                                        handleSaveData(
+                                          item?._id,
+                                          item?.transId,
+                                          1
+                                        )
                                       }
                                     >
                                       Approve
@@ -389,11 +405,28 @@ const TransactionPage = () => {
                                         onClick={() =>
                                           handleSaveData(
                                             item?._id,
-                                            item?.status
+                                            item?.transId,
+                                            0
                                           )
                                         }
                                       >
                                         Reject
+                                      </button>
+                                    </td>
+                                    <td>
+                                      <button
+                                        className="btn btn-orange btn-sm mtl-1"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#refList"
+                                        onClick={() =>
+                                          handleSaveData(
+                                            item?._id,
+                                            item?.transId,
+                                            2
+                                          )
+                                        }
+                                      >
+                                        In Progress
                                       </button>
                                     </td>
                                   </td>
@@ -404,14 +437,16 @@ const TransactionPage = () => {
                       </tbody>
                     </table>
 
-                    <button
-                      class="btn btn-indigo   btn-block"
-                      type="button"
-                      data-bs-toggle="modal"
-                      data-bs-target="#checkList"
-                    >
-                      Submit
-                    </button>
+                    {uType == 1 ? (
+                      <button
+                        class="btn btn-indigo   btn-block"
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#checkList"
+                      >
+                        Submit
+                      </button>
+                    ) : undefined}
                   </div>
                   <div
                     className="tab-pane fade"
@@ -524,7 +559,7 @@ const TransactionPage = () => {
               <button
                 type="button"
                 class="btn btn-primary"
-                onClick={() => handleActionTrans(tid, status, refId)}
+                onClick={() => handleActionTrans(tid, transId, status, refId)}
               >
                 Save changes
               </button>

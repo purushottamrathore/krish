@@ -44,6 +44,7 @@ const Header = () => {
         try {
           LoaderHelper.loaderStatus(false);
           setAmount("");
+          handleUserBal();
           alertSuccessMessage(result.message);
         } catch (error) {
           LoaderHelper.loaderStatus(false);
@@ -65,10 +66,8 @@ const Header = () => {
       >
         {/* <button className="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button> */}
 
-        <a className="navbar-brand pe-3 ps-4 ps-lg-3" href="#">
-          {/* <img src="assets/img/logo_footer.png" className="img-fluid" /> */}
-          <h3>Balance :- {userBal}</h3>
-        </a>
+        {/* <img src="assets/img/logo_footer.png" className="img-fluid" /> */}
+        <h3 style={{ marginLeft: "70px" }}>Balance :- {userBal}</h3>
 
         {uType == 1 ? (
           <div className="row" style={{ marginLeft: "800px" }}>
