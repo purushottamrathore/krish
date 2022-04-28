@@ -668,7 +668,7 @@ const TransactionPage = () => {
                 onChange={(event) => setRefId(event.target.value)}
               />
               <input
-                type="text"
+                type="password"
                 className="form-control mt-2"
                 name="pass"
                 value={password}

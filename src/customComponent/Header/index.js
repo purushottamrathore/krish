@@ -237,7 +237,7 @@ const Header = () => {
                 onChange={(e) => setAmount(e.target.value)}
               />
               <input
-                type="text"
+                type="password"
                 className="form-control mt-2"
                 name="pass"
                 placeholder="Enter Password Here"
