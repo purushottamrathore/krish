@@ -290,18 +290,19 @@ const linkFollow2 = (cell, row, rowIndex, formatExtraData) => {
 
 
 const columns = [
-
-{ dataField: 'select', text: 'Select', formatter: linkFollow},
-{ dataField: 'transId', text: 'Transaction Id(Vendor)', sort: true, },
-{ dataField: 'createdAt', text: 'Date', },
-{ dataField: 'product', text: 'Product', },
-{ dataField: 'customer', text: 'Customer', },
-{ dataField: 'amount', text: 'Amount'},
-{ dataField: 'status', text: 'Status'},
-{ dataField: 'refNo', text: 'Our Referrance No.'},
-{ dataField: 'wallet', text: 'Wallet'},
-{ dataField: 'route', text: 'Route'},
-{ dataField: 'Action', text: 'Action', formatter: linkFollow2},
+  uType == 1 ? { dataField: 'select', text: 'Select', formatter: linkFollow} : { dataField: 'select', text: 'Select', formatter: linkFollow, hidden: true}
+  ,
+  { dataField: 'transId', text: 'Transaction Id(Vendor)', },
+  { dataField: 'createdAt', text: 'Date', },
+  { dataField: 'product', text: 'Product', },
+  { dataField: 'customer', text: 'Customer', },
+  { dataField: 'amount', text: 'Amount'},
+  { dataField: 'status', text: 'Status'},
+  { dataField: 'refNo', text: 'Our Referrance No.'},
+  { dataField: 'wallet', text: 'Wallet'},
+  { dataField: 'route', text: 'Route'},
+  uType == 1 ? { dataField: 'Action', text: 'Action', formatter: linkFollow2} : { dataField: 'Action', text: 'Action', formatter: linkFollow2, hidden: true}
+  
 ]
 
 const columnss = [
@@ -532,7 +533,7 @@ onSizePerPageChange: function (page, sizePerPage) {
                     aria-labelledby="Spot-tab"
                   >
                     <CSVLink
-                      data={success}
+                      data={transactionsList}
                       class="btn btn-dark   btn-block mb-3"
                       headers={headers}
                       filename={`transList-${new Date()}.csv`}
