@@ -59,7 +59,7 @@ const AuthService = {
       st: status,
       transId: transId,
       tref: refId,
-      pass: password
+      pass: password,
     };
 
     ConsoleLogs(TAG + ", getActionTrans", `url : ' + ${url}`);
@@ -111,18 +111,59 @@ const AuthService = {
     return ApiCallPost(url, params, headers);
   },
 
-  addUserBalance: async (amount, password) => {
+  addUserBalance: async (amount, utrNo) => {
     const token = localStorage.getItem("token");
+    const emailId = localStorage.getItem("email");
     const { baseUrl, addUserBalance } = ApiConfig;
 
     const url = baseUrl + addUserBalance;
 
     const params = {
       bal: amount,
-      pass: password,
+      utrNo: utrNo,
+      email: emailId,
     };
 
     ConsoleLogs(TAG + ", addUserBalance", `url : ' + ${url}`);
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: token,
+    };
+
+    return ApiCallPost(url, params, headers);
+  },
+  getBalanceList: async () => {
+    const token = localStorage.getItem("token");
+    const { baseUrl, getBalanceList } = ApiConfig;
+
+    const url = baseUrl + getBalanceList;
+
+    const params = {};
+
+    ConsoleLogs(TAG + ", getBalanceList", `url : ' + ${url}`);
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: token,
+    };
+
+    return ApiCallPost(url, params, headers);
+  },
+
+  getBalanceAction: async (id, status, password) => {
+    const token = localStorage.getItem("token");
+    const { baseUrl, getBalanceAction } = ApiConfig;
+
+    const url = baseUrl + getBalanceAction;
+
+    const params = {
+      id: id,
+      st: status,
+      pass: password,
+    };
+
+    ConsoleLogs(TAG + ", getBalanceAction", `url : ' + ${url}`);
 
     const headers = {
       "Content-Type": "application/json",

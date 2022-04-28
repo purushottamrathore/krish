@@ -5,6 +5,7 @@ import {
   alertErrorMessage,
   alertSuccessMessage,
 } from "../../customComponent/CustomAlertMessage";
+import { $ } from "react-jquery-plugin";
 
 const Header = () => {
   const emailId = localStorage.getItem("email");
@@ -12,7 +13,8 @@ const Header = () => {
   // const uType = localStorage.getItem("uType");
   const [userBal, setUserBal] = useState("");
   const [amount, setAmount] = useState("");
-  const [password, setPassword] = useState("");
+  //const [password, setPassword] = useState("");
+  const [utrNo, setUtrNo] = useState("");
 
   const handleUserBal = async () => {
     LoaderHelper.loaderStatus(true);
@@ -38,19 +40,21 @@ const Header = () => {
   useEffect(() => {
     handleUserBal();
   }, []);
-  function Interval(){
-    setTimeout(()=>{
+  function Interval() {
+    setTimeout(() => {
       handleUserBal();
-     },15000)
-}
- useEffect(()=>Interval(),[])
-  const handleAddUserBalance = async (amount, password) => {
+    }, 15000);
+  }
+  useEffect(() => Interval(), []);
+  const handleAddUserBalance = async (amount, utrNo) => {
     LoaderHelper.loaderStatus(true);
-    await AuthService.addUserBalance(amount, password).then(async (result) => {
+    await AuthService.addUserBalance(amount, utrNo).then(async (result) => {
       if (result.success) {
         try {
           LoaderHelper.loaderStatus(false);
           setAmount("");
+          setUtrNo("");
+          $("#addAmount").modal("hide");
           handleUserBal();
           alertSuccessMessage(result.message);
         } catch (error) {
@@ -76,11 +80,7 @@ const Header = () => {
         {/* <img src="assets/img/logo_footer.png" className="img-fluid" /> */}
         <h3 style={{ marginLeft: "70px" }}>Balance :- {userBal}</h3>
 
-        
-
         <ul className="navbar-nav align-items-center ms-auto">
-          
-
           <li className="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
             <a
               className="btn btn-icon btn-transparent-dark dropdown-toggle"
@@ -159,19 +159,19 @@ const Header = () => {
                 onChange={(e) => setAmount(e.target.value)}
               />
               <input
-                type="password"
+                type="text"
                 className="form-control mt-2"
-                name="pass"
-                placeholder="Enter Password Here"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="utr"
+                placeholder="Enter UTR No."
+                value={utrNo}
+                onChange={(e) => setUtrNo(e.target.value)}
               />
             </div>
             <div class="modal-footer">
               <button
                 type="button"
                 class="btn btn-primary"
-                onClick={() => handleAddUserBalance(amount, password)}
+                onClick={() => handleAddUserBalance(amount, utrNo)}
               >
                 Submit
               </button>

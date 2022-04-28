@@ -14,13 +14,15 @@ import {
 } from "../../customComponent/CustomAlertMessage";
 import LoaderHelper from "../../customComponent/Loading/LoaderHelper";
 import BootstrapTable from "react-bootstrap-table-next";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-bootstrap-table-next/dist/react-bootstrap-table2.css";
 import paginationFactory from "react-bootstrap-table2-paginator";
-import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
 import filterFactory from "react-bootstrap-table2-filter";
-import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
-import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import "react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css";
+import ToolkitProvider, {
+  Search,
+} from "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit";
 
 const TransactionPage = () => {
   const { SearchBar } = Search;
@@ -39,6 +41,10 @@ const TransactionPage = () => {
   let [success, setSuccess] = useState([]);
   const [activeTab, setActiveTab] = useState("pending");
   const [password, setPassword] = useState("");
+  const [balList, setBalList] = useState([]);
+  const [date, setDate] = useState("");
+  const [date2, setDate2] = useState("");
+  const [date3, setDate3] = useState("");
 
   const headers = [
     { label: "Transaction Id(Vendor)", key: "transId" },
@@ -54,16 +60,17 @@ const TransactionPage = () => {
 
   useEffect(() => {
     handleTransaction();
+    handleBalanceList();
 
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
-  function Interval(){
-    setTimeout(()=>{
+
+  function Interval() {
+    setTimeout(() => {
       handleTransaction();
-     },15000)
-}
- useEffect(()=>Interval(),[])
+    }, 15000);
+  }
+  useEffect(() => Interval(), []);
 
   useEffect(() => {
     if (transactionsList && Object.keys(transactionsList).length > 0) {
@@ -75,7 +82,7 @@ const TransactionPage = () => {
       setPendData(data);
     }
     let data = transactionsList.filter(
-      (item) => 
+      (item) =>
         item?.status?.toLowerCase() === "success" ||
         item?.status?.toLowerCase() === "rejected"
     );
@@ -92,6 +99,24 @@ const TransactionPage = () => {
         try {
           LoaderHelper.loaderStatus(false);
           setTransactionsList(result);
+        } catch (error) {
+          LoaderHelper.loaderStatus(false);
+          //alertErrorMessage(error);
+          //console.log('error', `${error}`);
+        }
+      } else {
+        LoaderHelper.loaderStatus(false);
+        //alertErrorMessage(result.message);
+      }
+    });
+  };
+  const handleBalanceList = async () => {
+    LoaderHelper.loaderStatus(true);
+    await AuthService.getBalanceList().then(async (result) => {
+      if (result.success) {
+        try {
+          LoaderHelper.loaderStatus(false);
+          setBalList(result.data);
         } catch (error) {
           LoaderHelper.loaderStatus(false);
           //alertErrorMessage(error);
@@ -128,7 +153,13 @@ const TransactionPage = () => {
     );
   };
 
-  const handleActionRejectTrans = async (id, transId, status, refId, password) => {
+  const handleActionRejectTrans = async (
+    id,
+    transId,
+    status,
+    refId,
+    password
+  ) => {
     LoaderHelper.loaderStatus(true);
     await AuthService.getActionTrans(id, transId, status, refId, password).then(
       async (result) => {
@@ -139,8 +170,33 @@ const TransactionPage = () => {
             setRefId("");
             setPassword("");
             $("#reject").modal("hide");
-            alertSuccessMessage()
+            alertSuccessMessage();
             handleTransaction(result.msg);
+          } catch (error) {
+            LoaderHelper.loaderStatus(false);
+            //alertErrorMessage(error);
+            //console.log('error', `${error}`);
+          }
+        } else {
+          LoaderHelper.loaderStatus(false);
+          //alertErrorMessage(result.message);
+        }
+      }
+    );
+  };
+  const handleBalanceAction = async (id, status, password) => {
+    LoaderHelper.loaderStatus(true);
+    await AuthService.getBalanceAction(id, status, password).then(
+      async (result) => {
+        //console.log(result.data, 'getTransactions');
+        if (result) {
+          try {
+            LoaderHelper.loaderStatus(false);
+            setTid("");
+            setPassword("");
+            $("#balAction").modal("hide");
+            alertSuccessMessage(result.message);
+            handleBalanceList();
           } catch (error) {
             LoaderHelper.loaderStatus(false);
             //alertErrorMessage(error);
@@ -158,6 +214,11 @@ const TransactionPage = () => {
     setTid(id);
     setStatus(status);
     setTransId(transId);
+  };
+
+  const handleBalSaveData = (id, status) => {
+    setTid(id);
+    setStatus(status);
   };
 
   const handleCheckTrans = (id) => {
@@ -213,52 +274,30 @@ const TransactionPage = () => {
     console.log(type, pendData);
   }
 
-
-
   const linkFollow = (cell, row, rowIndex, formatExtraData) => {
     return (
-        <div>
-           <input
-              type="checkbox"
-              onClick={() =>
-                handleCheckTrans(row?._id)
-              }
-            />
-
-        </div>
-
-
+      <div>
+        <input type="checkbox" onClick={() => handleCheckTrans(row?._id)} />
+      </div>
     );
-};
+  };
 
-const linkFollow2 = (cell, row, rowIndex, formatExtraData) => {
-  return (
+  const linkFollow2 = (cell, row, rowIndex, formatExtraData) => {
+    return (
       <div>
         <button
-        class="btn btn-success btn-sm qwer"
-        data-bs-toggle="modal"
-        data-bs-target="#refList"
-        onClick={() =>
-          handleSaveData(
-            row?._id,
-            row?.transId,
-            1
-          )
-        }
-      >
-        Approve
-      </button>
-      <button
+          class="btn btn-success btn-sm qwer"
+          data-bs-toggle="modal"
+          data-bs-target="#refList"
+          onClick={() => handleSaveData(row?._id, row?.transId, 1)}
+        >
+          Approve
+        </button>
+        <button
           className="btn btn-danger btn-sm mt-1"
           data-bs-toggle="modal"
           data-bs-target="#reject"
-          onClick={() =>
-            handleSaveData(
-              row?._id,
-              row?.transId,
-              0
-            )
-          }
+          onClick={() => handleSaveData(row?._id, row?.transId, 0)}
         >
           Reject
         </button>
@@ -266,79 +305,119 @@ const linkFollow2 = (cell, row, rowIndex, formatExtraData) => {
           className="btn btn-primary btn-sm mtl-1"
           data-bs-toggle="modal"
           data-bs-target="#refList"
-          onClick={() =>
-            handleSaveData(
-              row?._id,
-              row?.transId,
-              2
-            )
-          }
+          onClick={() => handleSaveData(row?._id, row?.transId, 2)}
         >
           In Progress
         </button>
-         
       </div>
-     
+    );
+  };
+  const linkFollow3 = (cell, row, rowIndex, formatExtraData) => {
+    return row?.status?.toLowerCase() == "pending" ? (
+      <div>
+        <button
+          class="btn btn-success btn-sm qwer"
+          data-bs-toggle="modal"
+          data-bs-target="#balAction"
+          onClick={() => handleBalSaveData(row?._id, 1)}
+        >
+          Approve
+        </button>
+        <button
+          className="btn btn-danger btn-sm mt-1"
+          data-bs-toggle="modal"
+          data-bs-target="#balAction"
+          onClick={() => handleBalSaveData(row?._id, 0)}
+        >
+          Reject
+        </button>
+      </div>
+    ) : (
+      ""
+    );
+  };
 
+  const linkFollow4 = (cell, row, rowIndex, formatExtraData) => {
+    return <div>{moment(row?.createdAt).format("MM/DD/YYYY")}</div>;
+  };
 
-  );
-};
+  const linkFollow5 = (cell, row, rowIndex, formatExtraData) => {
+    return <div>{moment(row?.createdAt).format("MM/DD/YYYY")}</div>;
+  };
 
+  const linkFollow6 = (cell, row, rowIndex, formatExtraData) => {
+    return <div>{moment(row?.createdAt).format("MM/DD/YYYY")}</div>;
+  };
 
+  const columns = [
+    uType == 1
+      ? { dataField: "select", text: "Select", formatter: linkFollow }
+      : {
+          dataField: "select",
+          text: "Select",
+          formatter: linkFollow,
+          hidden: true,
+        },
+    { dataField: "transId", text: "Transaction Id(Vendor)" },
+    { dataField: "date", text: "Date", formatter: linkFollow4 },
+    { dataField: "product", text: "Product" },
+    { dataField: "customer", text: "Customer" },
+    { dataField: "amount", text: "Amount" },
+    { dataField: "status", text: "Status" },
+    { dataField: "refNo", text: "Our Referrance No." },
+    uType == 1
+      ? { dataField: "Action", text: "Action", formatter: linkFollow2 }
+      : {
+          dataField: "Action",
+          text: "Action",
+          formatter: linkFollow2,
+          hidden: true,
+        },
+  ];
 
+  const columnss = [
+    { dataField: "transId", text: "Transaction Id(Vendor)" },
+    { dataField: "date2", text: "Date", formatter: linkFollow5 },
+    { dataField: "product", text: "Product" },
+    { dataField: "customer", text: "Customer" },
+    { dataField: "amount", text: "Amount" },
+    { dataField: "status", text: "Status" },
+    { dataField: "refNo", text: "Our Referrance No." },
+  ];
+  const columnsss = [
+    { dataField: "utrNo", text: "UTR NO." },
+    { dataField: "date3", text: "Date", formatter: linkFollow6 },
+    { dataField: "amount", text: "Amount" },
+    { dataField: "status", text: "Status" },
+    uType == 1
+      ? { dataField: "Action", text: "Action", formatter: linkFollow3 }
+      : {
+          dataField: "Action",
+          text: "Action",
+          formatter: linkFollow3,
+          hidden: true,
+        },
+  ];
 
+  const pagination = paginationFactory({
+    page: 1,
+    sizePerPage: 500,
+    lastPageText: ">>",
+    firstPageText: "<<",
+    nextPageText: ">",
+    prePageText: "<",
+    showTotal: true,
+    alwaysShowAllBtns: true,
 
-
-const columns = [
-  uType == 1 ? { dataField: 'select', text: 'Select', formatter: linkFollow} : { dataField: 'select', text: 'Select', formatter: linkFollow, hidden: true}
-  ,
-  { dataField: 'transId', text: 'Transaction Id(Vendor)', },
-  { dataField: 'createdAt', text: 'Date', },
-  { dataField: 'product', text: 'Product', },
-  { dataField: 'customer', text: 'Customer', },
-  { dataField: 'amount', text: 'Amount'},
-  { dataField: 'status', text: 'Status'},
-  { dataField: 'refNo', text: 'Our Referrance No.'},
-  { dataField: 'wallet', text: 'Wallet'},
-  { dataField: 'route', text: 'Route'},
-  uType == 1 ? { dataField: 'Action', text: 'Action', formatter: linkFollow2} : { dataField: 'Action', text: 'Action', formatter: linkFollow2, hidden: true}
-  
-]
-
-const columnss = [
-
-  { dataField: 'transId', text: 'Transaction Id(Vendor)',},
-  { dataField: 'createdAt', text: 'Date', },
-  { dataField: 'product', text: 'Product', },
-  { dataField: 'customer', text: 'Customer', },
-  { dataField: 'amount', text: 'Amount'},
-  { dataField: 'status', text: 'Status'},
-  { dataField: 'refNo', text: 'Our Referrance No.'},
-  { dataField: 'wallet', text: 'Wallet'},
-  { dataField: 'route', text: 'Route'},
-  ]
-
-
-const pagination = paginationFactory({
-page: 1,
-sizePerPage: 5,
-lastPageText: '>>',
-firstPageText: "<<",
-nextPageText: ">",
-prePageText: "<",
-showTotal: true,
-alwaysShowAllBtns: true,
-
-onPageChange: function (page, sizePerPage) {
-    console.log('page', page);
-    console.log('sizePerPage', sizePerPage);
-},
-onSizePerPageChange: function (page, sizePerPage) {
-    console.log('page', page);
-    console.log('sizePerPage', sizePerPage);
-}
-
-});
+    onPageChange: function (page, sizePerPage) {
+      console.log("page", page);
+      console.log("sizePerPage", sizePerPage);
+    },
+    onSizePerPageChange: function (page, sizePerPage) {
+      console.log("page", page);
+      console.log("sizePerPage", sizePerPage);
+    },
+  });
 
   return (
     <>
@@ -357,19 +436,17 @@ onSizePerPageChange: function (page, sizePerPage) {
                       Transaction
                     </h1>
                   </div>
-                  <div className="col-auto mt-4"  >
-                    {uType == 1 ? (
-                       
-                          <button
-                            class="btn btn-primary   btn-block w-100"
-                            type="button"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addAmount"
-                          >
-                            Add Balance
-                          </button>
-                        
-                      ) : undefined}
+                  <div className="col-auto mt-4">
+                    {uType == 0 ? (
+                      <button
+                        class="btn btn-primary   btn-block w-100"
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addAmount"
+                      >
+                        Add Balance
+                      </button>
+                    ) : undefined}
                   </div>
                 </div>
               </div>
@@ -378,7 +455,7 @@ onSizePerPageChange: function (page, sizePerPage) {
           {/* Main page content */}
           <div className="container-xl px-4 mt-n10">
             <div className="filter_bar">
-              <form className="row"> 
+              <form className="row">
                 <div class="mb-3 col "></div>
                 <div class="mb-3 col "></div>
                 <div class="mb-3 col ">
@@ -405,9 +482,8 @@ onSizePerPageChange: function (page, sizePerPage) {
                 </div>
                 <div class="mb-3 col ">
                   <div className="row">
-                   
-                  <div className="  col">
-                  <button
+                    <div className="  col">
+                      <button
                         class="btn btn-primary  btn-block w-100  "
                         type="button"
                         onClick={() =>
@@ -418,16 +494,15 @@ onSizePerPageChange: function (page, sizePerPage) {
                       </button>
                     </div>
                     <div className="m  col">
-                    <button
-                      class="btn btn-light btn-block w-100  "
-                      type="button"
-                      onClick={() => handleTransaction()}
-                    >
-                      Reset
-                    </button>
+                      <button
+                        class="btn btn-light btn-block w-100  "
+                        type="button"
+                        onClick={() => handleTransaction()}
+                      >
+                        Reset
+                      </button>
+                    </div>
                   </div>
-                  </div>
-                  
                 </div>
               </form>
             </div>
@@ -470,6 +545,20 @@ onSizePerPageChange: function (page, sizePerPage) {
                       Transfer History
                     </button>
                   </li>
+                  <li className="nav-item" role="presentation">
+                    <button
+                      className="nav-link"
+                      id="Balance-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#Balance"
+                      type="button"
+                      role="tab"
+                      aria-controls="Balance"
+                      aria-selected="false"
+                    >
+                      Balance History
+                    </button>
+                  </li>
                 </ul>
                 <div className="tab-content" id="myTabContent">
                   <div
@@ -489,42 +578,44 @@ onSizePerPageChange: function (page, sizePerPage) {
                     </CSVLink>
 
                     <div class="my-3">
-                                <ToolkitProvider
-                                    hover
-                                    bootstrap4
-                                    keyField='_id'
-                                    columns={columns}
-                                    data={pendData}
-                                    search={{
-                                        afterSearch: (newResult) => console.log(newResult)
-                                    }}
+                      <ToolkitProvider
+                        hover
+                        bootstrap4
+                        keyField="_id"
+                        columns={columns}
+                        data={pendData}
+                        search={{
+                          afterSearch: (newResult) => console.log(newResult),
+                        }}
+                      >
+                        {(props) => (
+                          <React.Fragment>
+                            <SearchBar {...props.searchProps} />
 
-                                >
-                                    {
-                                        props => (
-                                            <React.Fragment>
-
-                                                <SearchBar {...props.searchProps} />
-
-                                                {/* <hr /> */}
-                                                <BootstrapTable
-                                                    hover
-                                                    bootstrap4
-                                                    keyField='_id'
-                                                    columns={columns}
-                                                    data={pendData}
-                                                    pagination={pagination}
-                                                    filter={filterFactory()}
-                                                    {...props.baseProps}
-                                                />
-                                            </React.Fragment>
-
-                                        )
-                                    }
-
-                                </ToolkitProvider>
-                                <button class="btn btn-primary  btn-block  " data-bs-toggle="modal" data-bs-target="#checkList">submit</button>
-                            </div>
+                            {/* <hr /> */}
+                            <BootstrapTable
+                              hover
+                              bootstrap4
+                              keyField="_id"
+                              columns={columns}
+                              data={pendData}
+                              pagination={pagination}
+                              filter={filterFactory()}
+                              {...props.baseProps}
+                            />
+                          </React.Fragment>
+                        )}
+                      </ToolkitProvider>
+                      {uType == 1 ? (
+                        <button
+                          class="btn btn-primary  btn-block  "
+                          data-bs-toggle="modal"
+                          data-bs-target="#checkList"
+                        >
+                          submit
+                        </button>
+                      ) : undefined}
+                    </div>
                   </div>
                   <div
                     className="tab-pane fade"
@@ -542,41 +633,81 @@ onSizePerPageChange: function (page, sizePerPage) {
                       Download me
                     </CSVLink>
                     <div class="my-3">
-                                <ToolkitProvider
-                                    hover
-                                    bootstrap4
-                                    keyField='_id'
-                                    columns={columnss}
-                                    data={transactionsList}
-                                    search={{
-                                        afterSearch: (newResult) => console.log(newResult)
-                                    }}
+                      <ToolkitProvider
+                        hover
+                        bootstrap4
+                        keyField="_id"
+                        columns={columnss}
+                        data={transactionsList}
+                        search={{
+                          afterSearch: (newResult) => console.log(newResult),
+                        }}
+                      >
+                        {(props) => (
+                          <React.Fragment>
+                            <SearchBar {...props.searchProps} />
 
-                                >
-                                    {
-                                        props => (
-                                            <React.Fragment>
+                            {/* <hr /> */}
+                            <BootstrapTable
+                              hover
+                              bootstrap4
+                              keyField="_id"
+                              columns={columnss}
+                              data={transactionsList}
+                              pagination={pagination}
+                              filter={filterFactory()}
+                              {...props.baseProps}
+                            />
+                          </React.Fragment>
+                        )}
+                      </ToolkitProvider>
+                    </div>
+                  </div>
+                  <div
+                    className="tab-pane fade"
+                    id="Balance"
+                    role="tabpanel"
+                    aria-labelledby="Balance-tab"
+                  >
+                    <CSVLink
+                      data={balList}
+                      class="btn btn-dark   btn-block mb-3"
+                      // headers={headers}
+                      filename={`transList-${new Date()}.csv`}
+                      style={{ float: "right" }}
+                    >
+                      Download me
+                    </CSVLink>
+                    <div class="my-3">
+                      <ToolkitProvider
+                        hover
+                        bootstrap4
+                        keyField="_id"
+                        columns={columnsss}
+                        data={balList}
+                        search={{
+                          afterSearch: (newResult) => console.log(newResult),
+                        }}
+                      >
+                        {(props) => (
+                          <React.Fragment>
+                            <SearchBar {...props.searchProps} />
 
-                                                <SearchBar {...props.searchProps} />
-
-                                                {/* <hr /> */}
-                                                <BootstrapTable
-                                                    hover
-                                                    bootstrap4
-                                                    keyField='_id'
-                                                    columns={columnss}
-                                                    data={transactionsList}
-                                                    pagination={pagination}
-                                                    filter={filterFactory()}
-                                                    {...props.baseProps}
-                                                />
-                                            </React.Fragment>
-
-                                        )
-                                    }
-
-                                </ToolkitProvider>
-                            </div>
+                            {/* <hr /> */}
+                            <BootstrapTable
+                              hover
+                              bootstrap4
+                              keyField="_id"
+                              columns={columnsss}
+                              data={balList}
+                              pagination={pagination}
+                              filter={filterFactory()}
+                              {...props.baseProps}
+                            />
+                          </React.Fragment>
+                        )}
+                      </ToolkitProvider>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -710,7 +841,51 @@ onSizePerPageChange: function (page, sizePerPage) {
               <button
                 type="button"
                 class="btn btn-primary"
-                onClick={() => handleActionRejectTrans(tid, transId, status, refId, password)}
+                onClick={() =>
+                  handleActionRejectTrans(tid, transId, status, refId, password)
+                }
+              >
+                Save changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="modal fade"
+        id="balAction"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">
+                Enter Transaction Id
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <input
+                type="password"
+                className="form-control mt-2"
+                name="pass"
+                value={password}
+                placeholder="Enter Password Id"
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary"
+                onClick={() => handleBalanceAction(tid, status, password)}
               >
                 Save changes
               </button>

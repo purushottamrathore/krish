@@ -8,6 +8,8 @@ export const ApiConfig = {
   getCheckSelect: "updatemultitrans",
   getUserBal: "getbal",
   addUserBalance: "badd",
+  getBalanceList: "getballist",
+  getBalanceAction: "balconfirm",
 
   baseUrl: `${appUrl}/api/`,
 };
