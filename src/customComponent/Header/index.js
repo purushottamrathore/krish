@@ -9,7 +9,7 @@ import {
 const Header = () => {
   const emailId = localStorage.getItem("email");
   const name = localStorage.getItem("name");
-  const uType = localStorage.getItem("uType");
+  // const uType = localStorage.getItem("uType");
   const [userBal, setUserBal] = useState("");
   const [amount, setAmount] = useState("");
   const [password, setPassword] = useState("");
@@ -38,6 +38,12 @@ const Header = () => {
   useEffect(() => {
     handleUserBal();
   }, []);
+  function Interval(){
+    setTimeout(()=>{
+      handleUserBal();
+     },15000)
+}
+ useEffect(()=>Interval(),[])
   const handleAddUserBalance = async (amount, password) => {
     LoaderHelper.loaderStatus(true);
     await AuthService.addUserBalance(amount, password).then(async (result) => {
@@ -70,94 +76,10 @@ const Header = () => {
         {/* <img src="assets/img/logo_footer.png" className="img-fluid" /> */}
         <h3 style={{ marginLeft: "70px" }}>Balance :- {userBal}</h3>
 
-        {uType == 1 ? (
-          <div className="row" style={{ marginLeft: "800px" }}>
-            <button
-              class="btn btn-indigo   btn-block w-100"
-              type="button"
-              data-bs-toggle="modal"
-              data-bs-target="#addAmount"
-            >
-              Add Balance
-            </button>
-          </div>
-        ) : undefined}
+        
 
         <ul className="navbar-nav align-items-center ms-auto">
-          <li className="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-            <a
-              className="btn btn-icon btn-transparent-dark dropdown-toggle"
-              id="navbarDropdownAlerts"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <i data-feather="bell"></i>
-            </a>
-            <div
-              className="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up"
-              aria-labelledby="navbarDropdownAlerts"
-            >
-              <h6 className="dropdown-header dropdown-notifications-header">
-                <i className="me-2" data-feather="bell"></i>
-                Alerts Center
-              </h6>
-              <a
-                className="dropdown-item dropdown-notifications-item"
-                href="#!"
-              >
-                <div className="dropdown-notifications-item-icon bg-info">
-                  <i data-feather="bar-chart"></i>
-                </div>
-                <div className="dropdown-notifications-item-content">
-                  <div className="dropdown-notifications-item-content-details">
-                    December 22, 2021
-                  </div>
-                  <div className="dropdown-notifications-item-content-text">
-                    A new monthly report is ready. Click here to view!
-                  </div>
-                </div>
-              </a>
-
-              <a
-                className="dropdown-item dropdown-notifications-item"
-                href="#!"
-              >
-                <div className="dropdown-notifications-item-icon bg-danger">
-                  <i className="fas fa-exclamation-triangle"></i>
-                </div>
-                <div className="dropdown-notifications-item-content">
-                  <div className="dropdown-notifications-item-content-details">
-                    December 8, 2021
-                  </div>
-                  <div className="dropdown-notifications-item-content-text">
-                    Critical system failure, systems shutting down.
-                  </div>
-                </div>
-              </a>
-
-              <a
-                className="dropdown-item dropdown-notifications-item"
-                href="#!"
-              >
-                <div className="dropdown-notifications-item-icon bg-success">
-                  <i data-feather="user-plus"></i>
-                </div>
-                <div className="dropdown-notifications-item-content">
-                  <div className="dropdown-notifications-item-content-details">
-                    December 2, 2021
-                  </div>
-                  <div className="dropdown-notifications-item-content-text">
-                    New user request. Woody has requested access to the
-                    organization.
-                  </div>
-                </div>
-              </a>
-              {/*  <!-- <a className="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a> --> */}
-            </div>
-          </li>
+          
 
           <li className="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
             <a

@@ -13,13 +13,23 @@ import {
   alertSuccessMessage,
 } from "../../customComponent/CustomAlertMessage";
 import LoaderHelper from "../../customComponent/Loading/LoaderHelper";
+import BootstrapTable from "react-bootstrap-table-next";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.css';
+import paginationFactory from "react-bootstrap-table2-paginator";
+import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+import filterFactory from "react-bootstrap-table2-filter";
+import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 const TransactionPage = () => {
+  const { SearchBar } = Search;
   const uType = localStorage.getItem("uType");
   const [transactionsList, setTransactionsList] = useState([]);
   const [refId, setRefId] = useState("");
   const [tid, setTid] = useState("");
   const [transId, setTransId] = useState("");
+  // const uType = localStorage.getItem("uType");
   const [status, setStatus] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -47,6 +57,13 @@ const TransactionPage = () => {
 
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  
+  function Interval(){
+    setTimeout(()=>{
+      handleTransaction();
+     },15000)
+}
+ useEffect(()=>Interval(),[])
 
   useEffect(() => {
     if (transactionsList && Object.keys(transactionsList).length > 0) {
@@ -196,6 +213,132 @@ const TransactionPage = () => {
     console.log(type, pendData);
   }
 
+
+
+  const linkFollow = (cell, row, rowIndex, formatExtraData) => {
+    return (
+        <div>
+           <input
+              type="checkbox"
+              onClick={() =>
+                handleCheckTrans(row?._id)
+              }
+            />
+
+        </div>
+
+
+    );
+};
+
+const linkFollow2 = (cell, row, rowIndex, formatExtraData) => {
+  return (
+      <div>
+        <button
+        class="btn btn-success btn-sm qwer"
+        data-bs-toggle="modal"
+        data-bs-target="#refList"
+        onClick={() =>
+          handleSaveData(
+            row?._id,
+            row?.transId,
+            1
+          )
+        }
+      >
+        Approve
+      </button>
+      <button
+          className="btn btn-danger btn-sm mt-1"
+          data-bs-toggle="modal"
+          data-bs-target="#reject"
+          onClick={() =>
+            handleSaveData(
+              row?._id,
+              row?.transId,
+              0
+            )
+          }
+        >
+          Reject
+        </button>
+        <button
+          className="btn btn-orange btn-sm mtl-1"
+          data-bs-toggle="modal"
+          data-bs-target="#refList"
+          onClick={() =>
+            handleSaveData(
+              row?._id,
+              row?.transId,
+              2
+            )
+          }
+        >
+          In Progress
+        </button>
+         
+      </div>
+     
+
+
+  );
+};
+
+
+
+
+
+
+const columns = [
+
+{ dataField: 'select', text: 'Select', formatter: linkFollow},
+{ dataField: 'transId', text: 'Transaction Id(Vendor)', sort: true, },
+{ dataField: 'createdAt', text: 'Date', },
+{ dataField: 'product', text: 'Product', },
+{ dataField: 'customer', text: 'Customer', },
+{ dataField: 'amount', text: 'Amount'},
+{ dataField: 'status', text: 'Status'},
+{ dataField: 'refNo', text: 'Our Referrance No.'},
+{ dataField: 'wallet', text: 'Wallet'},
+{ dataField: 'route', text: 'Route'},
+{ dataField: 'Action', text: 'Action', formatter: linkFollow2},
+]
+
+const columnss = [
+
+  { dataField: 'transId', text: 'Transaction Id(Vendor)',},
+  { dataField: 'createdAt', text: 'Date', },
+  { dataField: 'product', text: 'Product', },
+  { dataField: 'customer', text: 'Customer', },
+  { dataField: 'amount', text: 'Amount'},
+  { dataField: 'status', text: 'Status'},
+  { dataField: 'refNo', text: 'Our Referrance No.'},
+  { dataField: 'wallet', text: 'Wallet'},
+  { dataField: 'route', text: 'Route'},
+  ]
+
+
+const pagination = paginationFactory({
+page: 1,
+sizePerPage: 5,
+lastPageText: '>>',
+firstPageText: "<<",
+nextPageText: ">",
+prePageText: "<",
+showTotal: true,
+alwaysShowAllBtns: true,
+
+onPageChange: function (page, sizePerPage) {
+    console.log('page', page);
+    console.log('sizePerPage', sizePerPage);
+},
+onSizePerPageChange: function (page, sizePerPage) {
+    console.log('page', page);
+    console.log('sizePerPage', sizePerPage);
+}
+
+});
+
   return (
     <>
       <Header />
@@ -213,6 +356,20 @@ const TransactionPage = () => {
                       Transaction
                     </h1>
                   </div>
+                  <div className="col-auto mt-4"  >
+                    {uType == 1 ? (
+                       
+                          <button
+                            class="btn btn-primary   btn-block w-100"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addAmount"
+                          >
+                            Add Balance
+                          </button>
+                        
+                      ) : undefined}
+                  </div>
                 </div>
               </div>
             </div>
@@ -220,30 +377,9 @@ const TransactionPage = () => {
           {/* Main page content */}
           <div className="container-xl px-4 mt-n10">
             <div className="filter_bar">
-              <form className="row">
-                <div class="mb-3 col ">
-                  <input
-                    class="form-control form-control-solid"
-                    id="exampleFormControlInput1"
-                    type="text"
-                    value={product}
-                    placeholder="Enter Product"
-                    onChange={(event) => setProduct(event.target.value)}
-                  />
-                </div>
-                <div class="mb-3 col ">
-                  <div className="row">
-                    <div className="col">
-                      <button
-                        class="btn btn-indigo   btn-block w-100"
-                        type="button"
-                        onClick={() => productFilter(product, activeTab)}
-                      >
-                        Search
-                      </button>
-                    </div>
-                  </div>
-                </div>
+              <form className="row"> 
+                <div class="mb-3 col "></div>
+                <div class="mb-3 col "></div>
                 <div class="mb-3 col ">
                   <input
                     type="date"
@@ -268,9 +404,10 @@ const TransactionPage = () => {
                 </div>
                 <div class="mb-3 col ">
                   <div className="row">
-                    <div className="col">
-                      <button
-                        class="btn btn-indigo   btn-block w-100"
+                   
+                  <div className="  col">
+                  <button
+                        class="btn btn-primary  btn-block w-100  "
                         type="button"
                         onClick={() =>
                           dateFilter(startDate, endDate, activeTab)
@@ -279,16 +416,17 @@ const TransactionPage = () => {
                         Search
                       </button>
                     </div>
-                  </div>
-                  <div className="mt-2  col">
+                    <div className="m  col">
                     <button
-                      class="btn btn-indigo   btn-block w-100"
+                      class="btn btn-light btn-block w-100  "
                       type="button"
                       onClick={() => handleTransaction()}
                     >
                       Reset
                     </button>
                   </div>
+                  </div>
+                  
                 </div>
               </form>
             </div>
@@ -341,7 +479,7 @@ const TransactionPage = () => {
                   >
                     <CSVLink
                       data={pendData}
-                      class="btn btn-indigo   btn-block m-2"
+                      class="btn btn-dark   btn-block mb-3"
                       headers={headers}
                       filename={`pendingData-${new Date()}.csv`}
                       style={{ float: "right" }}
@@ -349,133 +487,42 @@ const TransactionPage = () => {
                       Download me
                     </CSVLink>
 
-                    <table
-                      className="table table-bordered"
-                      width="100%"
-                      id="myTable"
-                    >
-                      <thead>
-                        <tr>
-                          {uType == 1 ? <th>Select</th> : undefined}
-                          <th>Transaction Id(Vendor)</th>
-                          <th>Date</th>
-                          <th>Product</th>
-                          <th>Customer</th>
-                          <th>Amount</th>
-                          <th>Status</th>
-                          <th>Our Referrance No.</th>
-                          <th>Wallet</th>
-                          <th>Route</th>
-                          {uType == 1 ? <th>Action</th> : undefined}
-                        </tr>
-                      </thead>
-                      <tfoot>
-                        <tr>
-                          {uType == 1 ? <th>Select</th> : undefined}
-                          <th>Transaction Id(Vendor)</th>
-                          <th>Date</th>
-                          <th>Product</th>
-                          <th>Customer</th>
-                          <th>Amount</th>
-                          <th>Status</th>
-                          <th>Our Referrance No.</th>
-                          <th>Wallet</th>
-                          <th>Route</th>
-                          {uType == 1 ? <th>Action</th> : undefined}
-                        </tr>
-                      </tfoot>
-                      <tbody>
-                        {pendData.length > 0
-                          ? pendData.map((item, index) => (
-                              <tr key={index}>
-                                {uType == 1 ? (
-                                  <td>
-                                    <input
-                                      type="checkbox"
-                                      onClick={() =>
-                                        handleCheckTrans(item?._id)
-                                      }
-                                    />
-                                  </td>
-                                ) : undefined}
+                    <div class="my-3">
+                                <ToolkitProvider
+                                    hover
+                                    bootstrap4
+                                    keyField='_id'
+                                    columns={columns}
+                                    data={pendData}
+                                    search={{
+                                        afterSearch: (newResult) => console.log(newResult)
+                                    }}
 
-                                <td>{item?.transId}</td>
-                                <td>
-                                  {moment(item?.createdAt).format("DD/MM/YYYY")}
-                                </td>
-                                <td>{item?.product}</td>
-                                <td>{item?.customer}</td>
-                                <td>{item?.amount}</td>
-                                <td>{item?.status}</td>
-                                <td>{item?.refNo}</td>
-                                <td>{item?.wallet}</td>
-                                <td>{item?.route}</td>
-                                {uType == 1 ? (
-                                  <td>
-                                    <button
-                                      class="btn btn-success btn-sm qwer"
-                                      data-bs-toggle="modal"
-                                      data-bs-target="#refList"
-                                      onClick={() =>
-                                        handleSaveData(
-                                          item?._id,
-                                          item?.transId,
-                                          1
+                                >
+                                    {
+                                        props => (
+                                            <React.Fragment>
+
+                                                <SearchBar {...props.searchProps} />
+
+                                                {/* <hr /> */}
+                                                <BootstrapTable
+                                                    hover
+                                                    bootstrap4
+                                                    keyField='_id'
+                                                    columns={columns}
+                                                    data={pendData}
+                                                    pagination={pagination}
+                                                    filter={filterFactory()}
+                                                    {...props.baseProps}
+                                                />
+                                            </React.Fragment>
+
                                         )
-                                      }
-                                    >
-                                      Approve
-                                    </button>
-                                    <td>
-                                      <button
-                                        className="btn btn-danger btn-sm mt-1"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#reject"
-                                        onClick={() =>
-                                          handleSaveData(
-                                            item?._id,
-                                            item?.transId,
-                                            0
-                                          )
-                                        }
-                                      >
-                                        Reject
-                                      </button>
-                                    </td>
-                                    <td>
-                                      <button
-                                        className="btn btn-orange btn-sm mtl-1"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#refList"
-                                        onClick={() =>
-                                          handleSaveData(
-                                            item?._id,
-                                            item?.transId,
-                                            2
-                                          )
-                                        }
-                                      >
-                                        In Progress
-                                      </button>
-                                    </td>
-                                  </td>
-                                ) : undefined}
-                              </tr>
-                            ))
-                          : undefined}
-                      </tbody>
-                    </table>
+                                    }
 
-                    {uType == 1 ? (
-                      <button
-                        class="btn btn-indigo   btn-block"
-                        type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#checkList"
-                      >
-                        Submit
-                      </button>
-                    ) : undefined}
+                                </ToolkitProvider>
+                            </div>
                   </div>
                   <div
                     className="tab-pane fade"
@@ -485,68 +532,49 @@ const TransactionPage = () => {
                   >
                     <CSVLink
                       data={success}
-                      class="btn btn-indigo   btn-block m-2"
+                      class="btn btn-dark   btn-block mb-3"
                       headers={headers}
                       filename={`transList-${new Date()}.csv`}
                       style={{ float: "right" }}
                     >
                       Download me
                     </CSVLink>
+                    <div class="my-3">
+                                <ToolkitProvider
+                                    hover
+                                    bootstrap4
+                                    keyField='_id'
+                                    columns={columnss}
+                                    data={transactionsList}
+                                    search={{
+                                        afterSearch: (newResult) => console.log(newResult)
+                                    }}
 
-                    <table
-                      className="table table-bordered"
-                      id="myTable"
-                      width="100%"
-                    >
-                      <thead>
-                        <tr>
-                          <th>Sr.</th>
-                          <th>Transaction Id(Vendor)</th>
-                          <th>Date</th>
-                          <th>Operator Name</th>
-                          <th>Customer</th>
-                          <th>Amount</th>
-                          <th>Our Referrance No.</th>
-                          <th>Wallet</th>
-                          <th>Route</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tfoot>
-                        <tr>
-                          <th>Sr.</th>
-                          <th>Transaction Id(Vendor)</th>
-                          <th>Date</th>
-                          <th>Operator Name</th>
-                          <th>Customer</th>
-                          <th>Amount</th>
-                          <th>Our Referrance No.</th>
-                          <th>Wallet</th>
-                          <th>Route</th>
-                          <th>Status</th>
-                        </tr>
-                      </tfoot>
-                      <tbody>
-                        {success.length > 0
-                          ? success.map((item, index) => (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{item?.transId}</td>
-                                <td>
-                                  {moment(item?.createdAt).format("DD/MM/YYYY")}
-                                </td>
-                                <td>{item?.product}</td>
-                                <td>{item?.customer}</td>
-                                <td>{item?.amount}</td>
-                                <td>{item?.refNo}</td>
-                                <td>{item?.wallet}</td>
-                                <td>{item?.route}</td>
-                                <td>{item?.status}</td>
-                              </tr>
-                            ))
-                          : undefined}
-                      </tbody>
-                    </table>
+                                >
+                                    {
+                                        props => (
+                                            <React.Fragment>
+
+                                                <SearchBar {...props.searchProps} />
+
+                                                {/* <hr /> */}
+                                                <BootstrapTable
+                                                    hover
+                                                    bootstrap4
+                                                    keyField='_id'
+                                                    columns={columnss}
+                                                    data={transactionsList}
+                                                    pagination={pagination}
+                                                    filter={filterFactory()}
+                                                    {...props.baseProps}
+                                                />
+                                            </React.Fragment>
+
+                                        )
+                                    }
+
+                                </ToolkitProvider>
+                            </div>
                   </div>
                 </div>
               </div>

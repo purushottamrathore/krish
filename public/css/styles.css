@@ -21057,3 +21057,11 @@ pre[class*=language-] {
 .token.variable {
   color: #ff6666;
 }
+/* 
+#myTabContent .btn {
+  color: #fff !important;
+  background-color: #011e3f !important;
+} */
+#myTabContent .btn:hover {
+  color: #ffffff !important;
+}
