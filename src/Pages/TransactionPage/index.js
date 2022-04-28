@@ -263,7 +263,7 @@ const linkFollow2 = (cell, row, rowIndex, formatExtraData) => {
           Reject
         </button>
         <button
-          className="btn btn-orange btn-sm mtl-1"
+          className="btn btn-primary btn-sm mtl-1"
           data-bs-toggle="modal"
           data-bs-target="#refList"
           onClick={() =>
@@ -522,6 +522,7 @@ onSizePerPageChange: function (page, sizePerPage) {
                                     }
 
                                 </ToolkitProvider>
+                                <button class="btn btn-primary  btn-block  " data-bs-toggle="modal" data-bs-target="#checkList">submit</button>
                             </div>
                   </div>
                   <div
