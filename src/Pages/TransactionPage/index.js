@@ -57,7 +57,9 @@ const TransactionPage = () => {
       setPendData(data);
     }
     let data = transactionsList.filter(
-      (item) => item?.status?.toLowerCase() === "success"
+      (item) => 
+        item?.status?.toLowerCase() === "success" ||
+        item?.status?.toLowerCase() === "rejected"
     );
     setSuccess(data);
 
