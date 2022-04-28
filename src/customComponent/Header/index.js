@@ -12,6 +12,7 @@ const Header = () => {
   const uType = localStorage.getItem("uType");
   const [userBal, setUserBal] = useState("");
   const [amount, setAmount] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleUserBal = async () => {
     LoaderHelper.loaderStatus(true);
@@ -37,9 +38,9 @@ const Header = () => {
   useEffect(() => {
     handleUserBal();
   }, []);
-  const handleAddUserBalance = async (amount) => {
+  const handleAddUserBalance = async (amount, password) => {
     LoaderHelper.loaderStatus(true);
-    await AuthService.addUserBalance(amount).then(async (result) => {
+    await AuthService.addUserBalance(amount, password).then(async (result) => {
       if (result.success) {
         try {
           LoaderHelper.loaderStatus(false);
@@ -235,12 +236,20 @@ const Header = () => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
+              <input
+                type="text"
+                className="form-control mt-2"
+                name="pass"
+                placeholder="Enter Password Here"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
             <div class="modal-footer">
               <button
                 type="button"
                 class="btn btn-primary"
-                onClick={() => handleAddUserBalance(amount)}
+                onClick={() => handleAddUserBalance(amount, password)}
               >
                 Submit
               </button>

@@ -28,6 +28,7 @@ const TransactionPage = () => {
   const [product, setProduct] = useState([]);
   let [success, setSuccess] = useState([]);
   const [activeTab, setActiveTab] = useState("pending");
+  const [password, setPassword] = useState("");
 
   const headers = [
     { label: "Transaction Id(Vendor)", key: "transId" },
@@ -97,6 +98,32 @@ const TransactionPage = () => {
             setRefId("");
             $("#refList").modal("hide");
             handleTransaction();
+          } catch (error) {
+            LoaderHelper.loaderStatus(false);
+            //alertErrorMessage(error);
+            //console.log('error', `${error}`);
+          }
+        } else {
+          LoaderHelper.loaderStatus(false);
+          //alertErrorMessage(result.message);
+        }
+      }
+    );
+  };
+
+  const handleActionRejectTrans = async (id, transId, status, refId, password) => {
+    LoaderHelper.loaderStatus(true);
+    await AuthService.getActionTrans(id, transId, status, refId, password).then(
+      async (result) => {
+        //console.log(result.data, 'getTransactions');
+        if (result) {
+          try {
+            LoaderHelper.loaderStatus(false);
+            setRefId("");
+            setPassword("");
+            $("#reject").modal("hide");
+            alertSuccessMessage()
+            handleTransaction(result.msg);
           } catch (error) {
             LoaderHelper.loaderStatus(false);
             //alertErrorMessage(error);
@@ -403,7 +430,7 @@ const TransactionPage = () => {
                                       <button
                                         className="btn btn-danger btn-sm mt-1"
                                         data-bs-toggle="modal"
-                                        data-bs-target="#refList"
+                                        data-bs-target="#reject"
                                         onClick={() =>
                                           handleSaveData(
                                             item?._id,
@@ -604,6 +631,56 @@ const TransactionPage = () => {
                 type="button"
                 class="btn btn-primary"
                 onClick={() => handleCheckSelect(checkList, refId)}
+              >
+                Save changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="modal fade"
+        id="reject"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">
+                Enter Transaction Id
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <input
+                type="text"
+                className="form-control"
+                name="ref"
+                value={refId}
+                placeholder="Enter Transaction Id"
+                onChange={(event) => setRefId(event.target.value)}
+              />
+              <input
+                type="text"
+                className="form-control mt-2"
+                name="pass"
+                value={password}
+                placeholder="Enter Password Id"
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary"
+                onClick={() => handleActionRejectTrans(tid, transId, status, refId, password)}
               >
                 Save changes
               </button>

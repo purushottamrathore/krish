@@ -47,7 +47,7 @@ const AuthService = {
     return ApiCallGET(url, params, headers);
   },
 
-  getActionTrans: async (id, transId, status, refId) => {
+  getActionTrans: async (id, transId, status, refId, password) => {
     const token = localStorage.getItem("token");
     const { baseUrl, getActionTrans } = ApiConfig;
 
@@ -59,6 +59,7 @@ const AuthService = {
       st: status,
       transId: transId,
       tref: refId,
+      pass: password
     };
 
     ConsoleLogs(TAG + ", getActionTrans", `url : ' + ${url}`);
@@ -110,7 +111,7 @@ const AuthService = {
     return ApiCallPost(url, params, headers);
   },
 
-  addUserBalance: async (amount) => {
+  addUserBalance: async (amount, password) => {
     const token = localStorage.getItem("token");
     const { baseUrl, addUserBalance } = ApiConfig;
 
@@ -118,6 +119,7 @@ const AuthService = {
 
     const params = {
       bal: amount,
+      pass: password,
     };
 
     ConsoleLogs(TAG + ", addUserBalance", `url : ' + ${url}`);
