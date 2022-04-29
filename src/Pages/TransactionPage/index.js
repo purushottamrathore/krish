@@ -33,8 +33,8 @@ const TransactionPage = () => {
   const [transId, setTransId] = useState("");
   // const uType = localStorage.getItem("uType");
   const [status, setStatus] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(new Date().toLocaleDateString());
+  const [endDate, setEndDate] = useState(new Date().toLocaleDateString());
   let [checkList, setCheckList] = useState([]);
   let [pendData, setPendData] = useState([]);
   const [product, setProduct] = useState([]);
@@ -401,7 +401,7 @@ const TransactionPage = () => {
 
   const pagination = paginationFactory({
     page: 1,
-    sizePerPage: 500,
+    sizePerPage: 50,
     lastPageText: ">>",
     firstPageText: "<<",
     nextPageText: ">",
@@ -418,6 +418,7 @@ const TransactionPage = () => {
       console.log("sizePerPage", sizePerPage);
     },
   });
+
 
   return (
     <>
