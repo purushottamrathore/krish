@@ -45,6 +45,7 @@ const TransactionPage = () => {
   const [date, setDate] = useState("");
   const [date2, setDate2] = useState("");
   const [date3, setDate3] = useState("");
+  const [checked, setChecked] = useState(false);
 
   const headers = [
     { label: "Transaction Id(Vendor)", key: "transId" },
@@ -77,7 +78,8 @@ const TransactionPage = () => {
       let data = transactionsList.filter(
         (item) =>
           item?.status?.toLowerCase() === "pending" ||
-          item?.status?.toLowerCase() === "inprogress"
+          item?.status?.toLowerCase() === "inprogress" ||
+          item?.status?.toLowerCase() === "success"
       );
       setPendData(data);
     }
@@ -195,6 +197,31 @@ const TransactionPage = () => {
             setTid("");
             setPassword("");
             $("#balAction").modal("hide");
+            alertSuccessMessage(result.message);
+            handleBalanceList();
+          } catch (error) {
+            LoaderHelper.loaderStatus(false);
+            //alertErrorMessage(error);
+            //console.log('error', `${error}`);
+          }
+        } else {
+          LoaderHelper.loaderStatus(false);
+          //alertErrorMessage(result.message);
+        }
+      }
+    );
+  };
+  const handleSuccessAction = async (id, transId, status, password) => {
+    LoaderHelper.loaderStatus(true);
+    await AuthService.getSuccessAction(id, transId, status, password).then(
+      async (result) => {
+        //console.log(result.data, 'getTransactions');
+        if (result) {
+          try {
+            LoaderHelper.loaderStatus(false);
+            setTid("");
+            setPassword("");
+            $("#successAction").modal("hide");
             alertSuccessMessage(result.message);
             handleBalanceList();
           } catch (error) {
@@ -336,6 +363,34 @@ const TransactionPage = () => {
       ""
     );
   };
+  const linkFollow8 = (cell, row, rowIndex, formatExtraData) => {
+    return (
+      <div>
+        {row?.status?.toLowerCase() == "success" ? (
+          <>
+            <button
+              class="btn btn-light btn-sm qwer"
+              data-bs-toggle="modal"
+              data-bs-target="#balAction"
+              onClick={() => handleSaveData(row?._id, row?.transId, 3)}
+            >
+              Pending
+            </button>
+            <button
+              class="btn btn-danger btn-sm qwer mt-1"
+              data-bs-toggle="modal"
+              data-bs-target="#balAction"
+              onClick={() => handleSaveData(row?._id, row?.transId, 0)}
+            >
+              Reject
+            </button>
+          </>
+        ) : (
+          ""
+        )}
+      </div>
+    );
+  };
 
   const linkFollow4 = (cell, row, rowIndex, formatExtraData) => {
     return <div>{moment(row?.createdAt).format("MM/DD/YYYY")}</div>;
@@ -383,6 +438,7 @@ const TransactionPage = () => {
     { dataField: "amount", text: "Amount" },
     { dataField: "status", text: "Status" },
     { dataField: "refNo", text: "Our Referrance No." },
+    { dataField: "Action", text: "Action", formatter: linkFollow8 },
   ];
   const columnsss = [
     { dataField: "utrNo", text: "UTR NO." },
@@ -418,7 +474,12 @@ const TransactionPage = () => {
       console.log("sizePerPage", sizePerPage);
     },
   });
-
+  function selects() {
+    setChecked(1);
+  }
+  function deSelect() {
+    setChecked(2);
+  }
 
   return (
     <>
@@ -577,6 +638,20 @@ const TransactionPage = () => {
                     >
                       Download me
                     </CSVLink>
+                    <button
+                      type="button"
+                      class="btn btn-primary  btn-block w-10 "
+                      onclick={() => selects()}
+                    >
+                      Select All
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-light  btn-block w-10 "
+                      onclick={() => deSelect()}
+                    >
+                      Deselect All
+                    </button>
 
                     <div class="my-3">
                       <ToolkitProvider
@@ -863,7 +938,7 @@ const TransactionPage = () => {
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">
-                Enter Transaction Id
+                Enter Password
               </h5>
               <button
                 type="button"
@@ -887,6 +962,48 @@ const TransactionPage = () => {
                 type="button"
                 class="btn btn-primary"
                 onClick={() => handleBalanceAction(tid, status, password)}
+              >
+                Save changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="modal fade"
+        id="successAction"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">
+                Enter Password
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <input
+                type="password"
+                className="form-control mt-2"
+                name="pass"
+                value={password}
+                placeholder="Enter Password Id"
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary"
+                onClick={() => handleSuccessAction(tid, status, password)}
               >
                 Save changes
               </button>

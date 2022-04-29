@@ -172,6 +172,30 @@ const AuthService = {
 
     return ApiCallPost(url, params, headers);
   },
+
+  getSuccessAction: async (id, transId, status, password) => {
+    const token = localStorage.getItem("token");
+    const { baseUrl, getBalanceAction } = ApiConfig;
+
+    const url = baseUrl + getBalanceAction;
+
+    const params = {
+      id: id,
+      transId: transId,
+      st: status,
+      pass: password,
+      trans: true,
+    };
+
+    ConsoleLogs(TAG + ", getBalanceAction", `url : ' + ${url}`);
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: token,
+    };
+
+    return ApiCallPost(url, params, headers);
+  },
 };
 
 export default AuthService;

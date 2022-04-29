@@ -10,6 +10,7 @@ export const ApiConfig = {
   addUserBalance: "badd",
   getBalanceList: "getballist",
   getBalanceAction: "balconfirm",
+  getBalanceAction: "updatetrans",
 
   baseUrl: `${appUrl}/api/`,
 };
