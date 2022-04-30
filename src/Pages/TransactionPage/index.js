@@ -67,8 +67,9 @@ const TransactionPage = () => {
   }, []);
 
   function Interval() {
-    setTimeout(() => {
+    setInterval(() => {
       handleTransaction();
+      handleBalanceList();
     }, 15000);
   }
   useEffect(() => Interval(), []);
@@ -223,7 +224,7 @@ const TransactionPage = () => {
             setPassword("");
             $("#successAction").modal("hide");
             alertSuccessMessage(result.message);
-            handleBalanceList();
+            handleTransaction();
           } catch (error) {
             LoaderHelper.loaderStatus(false);
             //alertErrorMessage(error);
@@ -257,7 +258,11 @@ const TransactionPage = () => {
 
   const handleCheckSelect = async (chId, refId) => {
     LoaderHelper.loaderStatus(true);
-    await AuthService.getCheckSelect(chId, refId).then(async (result) => {
+    let vh = new Set(checkList)
+    let sstL =[]
+    vh.forEach(e=>{sstL.push(e)});
+    console.log('check',checkList,vh.values(),sstL,chId)
+    await AuthService.getCheckSelect(sstL, refId).then(async (result) => {
       //console.log(result.data, 'getTransactions');
       if (result.msg === "done") {
         try {
@@ -405,14 +410,14 @@ const TransactionPage = () => {
   };
 
   const columns = [
-    uType == 1
-      ? { dataField: "select", text: "Select", formatter: linkFollow }
-      : {
-          dataField: "select",
-          text: "Select",
-          formatter: linkFollow,
-          hidden: true,
-        },
+    // uType == 1
+    //   ? { dataField: "select", text: "Select", formatter: linkFollow }
+    //   : {
+    //       dataField: "select",
+    //       text: "Select",
+    //       formatter: linkFollow,
+    //       hidden: true,
+    //     },
     { dataField: "transId", text: "Transaction Id(Vendor)" },
     { dataField: "date", text: "Date", formatter: linkFollow4 },
     { dataField: "product", text: "Product" },
@@ -481,7 +486,32 @@ const TransactionPage = () => {
     setChecked(2);
   }
   const selectRow = {
-    mode: 'checkbox' // single row selection
+    mode: 'checkbox',
+    onSelect: (row, isSelect, rowIndex, e) => {
+      let a = checkList
+      if(isSelect){
+        a.push(row._id)
+        console.log(a,checkList)
+
+      }else{
+        a=a.filter(e=>e!=row._id)
+        setCheckList(a)
+        console.log(a,checkList)
+      }
+      // console.log(row,isSelect,rowIndex,e)
+    },
+    onSelectAll: (isSelect, rows, e) => {
+      if(isSelect){
+        let a=[]
+        rows.filter((e)=>{a.push(e._id)})
+        console.log(a)
+        setCheckList(a)
+        
+      }else{
+        setCheckList([])
+      }
+      console.log(checkList)
+    }
   };
 
   return (
@@ -642,7 +672,7 @@ const TransactionPage = () => {
                     >
                       Download me
                     </CSVLink>
-                    <button
+                    {/* <button
                       type="button"
                       class="btn btn-primary  btn-block w-10 "
                       onclick={() => selects()}
@@ -655,7 +685,7 @@ const TransactionPage = () => {
                       onclick={() => deSelect()}
                     >
                       Deselect All
-                    </button>
+                    </button> */}
 
                     <div class="my-3">
                       <ToolkitProvider
@@ -681,7 +711,7 @@ const TransactionPage = () => {
                               data={pendData}
                               pagination={pagination}
                               filter={filterFactory()}
-                              // selectRow={ selectRow }
+                              selectRow={ selectRow }
                               {...props.baseProps}
                             />
                           </React.Fragment>
