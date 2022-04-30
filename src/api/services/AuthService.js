@@ -175,12 +175,12 @@ const AuthService = {
 
   getSuccessAction: async (id, transId, status, password) => {
     const token = localStorage.getItem("token");
-    const { baseUrl, getBalanceAction } = ApiConfig;
+    const { baseUrl, getBalanceAction2 } = ApiConfig;
 
-    const url = baseUrl + getBalanceAction;
+    const url = baseUrl + getBalanceAction2;
 
     const params = {
-      id: id,
+      tid: id,
       transId: transId,
       st: status,
       pass: password,

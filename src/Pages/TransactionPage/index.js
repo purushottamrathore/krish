@@ -78,8 +78,8 @@ const TransactionPage = () => {
       let data = transactionsList.filter(
         (item) =>
           item?.status?.toLowerCase() === "pending" ||
-          item?.status?.toLowerCase() === "inprogress" ||
-          item?.status?.toLowerCase() === "success"
+          item?.status?.toLowerCase() === "inprogress" 
+          // item?.status?.toLowerCase() === "success"
       );
       setPendData(data);
     }
@@ -371,7 +371,7 @@ const TransactionPage = () => {
             <button
               class="btn btn-light btn-sm qwer"
               data-bs-toggle="modal"
-              data-bs-target="#balAction"
+              data-bs-target="#successAction"
               onClick={() => handleSaveData(row?._id, row?.transId, 3)}
             >
               Pending
@@ -379,7 +379,7 @@ const TransactionPage = () => {
             <button
               class="btn btn-danger btn-sm qwer mt-1"
               data-bs-toggle="modal"
-              data-bs-target="#balAction"
+              data-bs-target="#successAction"
               onClick={() => handleSaveData(row?._id, row?.transId, 0)}
             >
               Reject
@@ -480,8 +480,12 @@ const TransactionPage = () => {
   function deSelect() {
     setChecked(2);
   }
+  const selectRow = {
+    mode: 'checkbox' // single row selection
+  };
 
   return (
+    
     <>
       <Header />
       <div id="layoutSidenav_content">
@@ -677,6 +681,7 @@ const TransactionPage = () => {
                               data={pendData}
                               pagination={pagination}
                               filter={filterFactory()}
+                              // selectRow={ selectRow }
                               {...props.baseProps}
                             />
                           </React.Fragment>
@@ -1003,7 +1008,7 @@ const TransactionPage = () => {
               <button
                 type="button"
                 class="btn btn-primary"
-                onClick={() => handleSuccessAction(tid, status, password)}
+                onClick={() => handleSuccessAction(tid,transId, status, password)}
               >
                 Save changes
               </button>
