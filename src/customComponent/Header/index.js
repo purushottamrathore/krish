@@ -15,6 +15,7 @@ const Header = () => {
   const [amount, setAmount] = useState("");
   //const [password, setPassword] = useState("");
   const [utrNo, setUtrNo] = useState("");
+  const [date, setDate] = useState("");
 
   const handleUserBal = async () => {
     LoaderHelper.loaderStatus(true);
@@ -46,28 +47,30 @@ const Header = () => {
     }, 15000);
   }
   useEffect(() => Interval(), []);
-  const handleAddUserBalance = async (amount, utrNo) => {
+  const handleAddUserBalance = async (amount, utrNo, date) => {
     LoaderHelper.loaderStatus(true);
-    await AuthService.addUserBalance(amount, utrNo).then(async (result) => {
-      if (result.success) {
-        try {
+    await AuthService.addUserBalance(amount, utrNo, date).then(
+      async (result) => {
+        if (result.success) {
+          try {
+            LoaderHelper.loaderStatus(false);
+            setAmount("");
+            setUtrNo("");
+            $("#addAmount").modal("hide");
+            handleUserBal();
+            alertSuccessMessage(result.message);
+          } catch (error) {
+            LoaderHelper.loaderStatus(false);
+            alertErrorMessage(error);
+            console.log(error, "error");
+          }
+        } else {
           LoaderHelper.loaderStatus(false);
-          setAmount("");
-          setUtrNo("");
-          $("#addAmount").modal("hide");
-          handleUserBal();
-          alertSuccessMessage(result.message);
-        } catch (error) {
-          LoaderHelper.loaderStatus(false);
-          alertErrorMessage(error);
-          console.log(error, "error");
+          // const errorMessage = result.message;
+          alertErrorMessage(result.message);
         }
-      } else {
-        LoaderHelper.loaderStatus(false);
-        // const errorMessage = result.message;
-        alertErrorMessage(result.message);
       }
-    });
+    );
   };
   return (
     <>
@@ -166,12 +169,20 @@ const Header = () => {
                 value={utrNo}
                 onChange={(e) => setUtrNo(e.target.value)}
               />
+              <input
+                type="date"
+                className="form-control mt-2"
+                name="date"
+                placeholder="Enter Date Here"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
             </div>
             <div class="modal-footer">
               <button
                 type="button"
                 class="btn btn-primary"
-                onClick={() => handleAddUserBalance(amount, utrNo)}
+                onClick={() => handleAddUserBalance(amount, utrNo, date)}
               >
                 Submit
               </button>

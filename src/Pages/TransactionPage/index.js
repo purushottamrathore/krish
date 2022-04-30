@@ -33,8 +33,8 @@ const TransactionPage = () => {
   const [transId, setTransId] = useState("");
   // const uType = localStorage.getItem("uType");
   const [status, setStatus] = useState("");
-  const [startDate, setStartDate] = useState(new Date().toLocaleDateString());
-  const [endDate, setEndDate] = useState(new Date().toLocaleDateString());
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
   let [checkList, setCheckList] = useState([]);
   let [pendData, setPendData] = useState([]);
   const [product, setProduct] = useState([]);
@@ -62,7 +62,10 @@ const TransactionPage = () => {
   useEffect(() => {
     handleTransaction();
     handleBalanceList();
-
+    document.getElementById("litepickerRangePlugin").value =
+      moment().format("YYYY-MM-DD");
+    document.getElementById("litepickerRangePlugin2").value =
+      moment().format("YYYY-MM-DD");
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -79,15 +82,14 @@ const TransactionPage = () => {
       let data = transactionsList.filter(
         (item) =>
           item?.status?.toLowerCase() === "pending" ||
-          item?.status?.toLowerCase() === "inprogress" 
-          // item?.status?.toLowerCase() === "success"
+          item?.status?.toLowerCase() === "inprogress"
       );
       setPendData(data);
     }
     let data = transactionsList.filter(
       (item) =>
-        item?.status?.toLowerCase() === "success" ||
-        item?.status?.toLowerCase() === "rejected"
+        moment(item?.createdAt).format("YYYY-MM-DD") ==
+        moment(new Date()).format("YYYY-MM-DD")
     );
     setSuccess(data);
 
@@ -258,10 +260,12 @@ const TransactionPage = () => {
 
   const handleCheckSelect = async (chId, refId) => {
     LoaderHelper.loaderStatus(true);
-    let vh = new Set(checkList)
-    let sstL =[]
-    vh.forEach(e=>{sstL.push(e)});
-    console.log('check',checkList,vh.values(),sstL,chId)
+    let vh = new Set(checkList);
+    let sstL = [];
+    vh.forEach((e) => {
+      sstL.push(e);
+    });
+    console.log("check", checkList, vh.values(), sstL, chId);
     await AuthService.getCheckSelect(sstL, refId).then(async (result) => {
       //console.log(result.data, 'getTransactions');
       if (result.msg === "done") {
@@ -299,12 +303,12 @@ const TransactionPage = () => {
     console.log(type, pendData);
   }
 
-  function productFilter(product, type1) {
-    let type;
-    type = transactionsList.filter((e) => e?.product?.toLowerCase() == product);
-    type1 == "pending" ? setPendData(type) : setSuccess(type);
-    console.log(type, pendData);
-  }
+  // function productFilter(product, type1) {
+  //   let type;
+  //   type = transactionsList.filter((e) => e?.product?.toLowerCase() == product);
+  //   type1 == "pending" ? setPendData(type) : setSuccess(type);
+  //   console.log(type, pendData);
+  // }
 
   const linkFollow = (cell, row, rowIndex, formatExtraData) => {
     return (
@@ -398,15 +402,15 @@ const TransactionPage = () => {
   };
 
   const linkFollow4 = (cell, row, rowIndex, formatExtraData) => {
-    return <div>{moment(row?.createdAt).format("MM/DD/YYYY")}</div>;
+    return <div>{moment(row?.createdAt).format("MMM DD YYYY h:mm A")}</div>;
   };
 
   const linkFollow5 = (cell, row, rowIndex, formatExtraData) => {
-    return <div>{moment(row?.createdAt).format("MM/DD/YYYY")}</div>;
+    return <div>{moment(row?.createdAt).format("MMM DD YYYY h:mm A")}</div>;
   };
 
   const linkFollow6 = (cell, row, rowIndex, formatExtraData) => {
-    return <div>{moment(row?.createdAt).format("MM/DD/YYYY")}</div>;
+    return <div>{moment(row?.createdAt).format("MMM DD YYYY h:mm A")}</div>;
   };
 
   const columns = [
@@ -486,36 +490,35 @@ const TransactionPage = () => {
     setChecked(2);
   }
   const selectRow = {
-    mode: 'checkbox',
+    mode: "checkbox",
     onSelect: (row, isSelect, rowIndex, e) => {
-      let a = checkList
-      if(isSelect){
-        a.push(row._id)
-        console.log(a,checkList)
-
-      }else{
-        a=a.filter(e=>e!=row._id)
-        setCheckList(a)
-        console.log(a,checkList)
+      let a = checkList;
+      if (isSelect) {
+        a.push(row._id);
+        console.log(a, checkList);
+      } else {
+        a = a.filter((e) => e != row._id);
+        setCheckList(a);
+        console.log(a, checkList);
       }
       // console.log(row,isSelect,rowIndex,e)
     },
     onSelectAll: (isSelect, rows, e) => {
-      if(isSelect){
-        let a=[]
-        rows.filter((e)=>{a.push(e._id)})
-        console.log(a)
-        setCheckList(a)
-        
-      }else{
-        setCheckList([])
+      if (isSelect) {
+        let a = [];
+        rows.filter((e) => {
+          a.push(e._id);
+        });
+        console.log(a);
+        setCheckList(a);
+      } else {
+        setCheckList([]);
       }
-      console.log(checkList)
-    }
+      console.log(checkList);
+    },
   };
 
   return (
-    
     <>
       <Header />
       <div id="layoutSidenav_content">
@@ -570,7 +573,7 @@ const TransactionPage = () => {
                     type="date"
                     class="form-control form-control-solid"
                     data-provide="datepicker"
-                    id="litepickerRangePlugin"
+                    id="litepickerRangePlugin2"
                     value={endDate}
                     placeholder="Select date range..."
                     onChange={(event) => setEndDate(event.target.value)}
@@ -711,7 +714,7 @@ const TransactionPage = () => {
                               data={pendData}
                               pagination={pagination}
                               filter={filterFactory()}
-                              selectRow={ selectRow }
+                              selectRow={selectRow}
                               {...props.baseProps}
                             />
                           </React.Fragment>
@@ -735,7 +738,7 @@ const TransactionPage = () => {
                     aria-labelledby="Spot-tab"
                   >
                     <CSVLink
-                      data={transactionsList}
+                      data={success}
                       class="btn btn-dark   btn-block mb-3"
                       headers={headers}
                       filename={`transList-${new Date()}.csv`}
@@ -749,7 +752,7 @@ const TransactionPage = () => {
                         bootstrap4
                         keyField="_id"
                         columns={columnss}
-                        data={transactionsList}
+                        data={success}
                         search={{
                           afterSearch: (newResult) => console.log(newResult),
                         }}
@@ -764,7 +767,7 @@ const TransactionPage = () => {
                               bootstrap4
                               keyField="_id"
                               columns={columnss}
-                              data={transactionsList}
+                              data={success}
                               pagination={pagination}
                               filter={filterFactory()}
                               {...props.baseProps}
@@ -1038,7 +1041,9 @@ const TransactionPage = () => {
               <button
                 type="button"
                 class="btn btn-primary"
-                onClick={() => handleSuccessAction(tid,transId, status, password)}
+                onClick={() =>
+                  handleSuccessAction(tid, transId, status, password)
+                }
               >
                 Save changes
               </button>

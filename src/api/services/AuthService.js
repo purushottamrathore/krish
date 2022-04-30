@@ -111,7 +111,7 @@ const AuthService = {
     return ApiCallPost(url, params, headers);
   },
 
-  addUserBalance: async (amount, utrNo) => {
+  addUserBalance: async (amount, utrNo, date) => {
     const token = localStorage.getItem("token");
     const emailId = localStorage.getItem("email");
     const { baseUrl, addUserBalance } = ApiConfig;
@@ -121,6 +121,7 @@ const AuthService = {
     const params = {
       bal: amount,
       utrNo: utrNo,
+      date: date,
       email: emailId,
     };
 
