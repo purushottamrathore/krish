@@ -447,7 +447,14 @@ const TransactionPage = () => {
     { dataField: "amount", text: "Amount" },
     { dataField: "status", text: "Status" },
     { dataField: "refNo", text: "Our Referrance No." },
-    { dataField: "Action", text: "Action", formatter: linkFollow8 },
+    uType == 1
+      ? { dataField: "Action", text: "Action", formatter: linkFollow8 }
+      : {
+          dataField: "Action",
+          text: "Action",
+          formatter: linkFollow8,
+          hidden: true,
+        },
   ];
   const columnsss = [
     { dataField: "utrNo", text: "UTR NO." },
