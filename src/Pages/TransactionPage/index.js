@@ -28,6 +28,7 @@ const TransactionPage = () => {
   const { SearchBar } = Search;
   const uType = localStorage.getItem("uType");
   const [transactionsList, setTransactionsList] = useState([]);
+  const [transferList, setTransferList] = useState([]);
   const [refId, setRefId] = useState("");
   const [tid, setTid] = useState("");
   const [transId, setTransId] = useState("");
@@ -46,7 +47,6 @@ const TransactionPage = () => {
   const [date2, setDate2] = useState("");
   const [date3, setDate3] = useState("");
   const [checked, setChecked] = useState(false);
-  var myTime;
 
   const headers = [
     { label: "Transaction Id(Vendor)", key: "transId" },
@@ -63,6 +63,7 @@ const TransactionPage = () => {
   useEffect(() => {
     handleTransaction();
     handleBalanceList();
+    handleTransactionB();
     document.getElementById("litepickerRangePlugin").value =
       moment().format("YYYY-MM-DD");
     document.getElementById("litepickerRangePlugin2").value =
@@ -71,12 +72,13 @@ const TransactionPage = () => {
   }, []);
 
 
-     myTime = setInterval(() => {
-      handleTransaction();
-      handleBalanceList();
-    }, 15000);
+      setInterval(() => {
+        handleTransaction();
+        handleBalanceList();
+      }, 15000);
+     
 
-  useEffect(() => myTime, []);
+
 
   useEffect(() => {
     if (transactionsList && Object.keys(transactionsList).length > 0) {
@@ -87,13 +89,7 @@ const TransactionPage = () => {
       );
       setPendData(data);
     }
-    let getData = transactionsList;
-    let data = getData.filter(
-      (item) =>
-        moment(item?.createdAt).format("YYYY-MM-DD") ==
-        moment(new Date()).format("YYYY-MM-DD")
-    );
-    setSuccess(data);
+    
     // let data = transactionsList.filter(
     //   (item) =>
     //     moment(item?.createdAt).format("YYYY-MM-DD") ==
@@ -103,6 +99,21 @@ const TransactionPage = () => {
 
     console.log(transactionsList, "lastJsonMessagerathore");
   }, [transactionsList]);
+
+
+  useEffect(() => {
+    if (transferList && Object.keys(transferList).length > 0) {
+    }
+    
+    let data = transferList.filter(
+      (item) =>
+        moment(item?.createdAt).format("YYYY-MM-DD") ==
+        moment(new Date()).format("YYYY-MM-DD")
+    );
+    setSuccess(data);
+
+    console.log(transferList, "lastJsonMessagerathore");
+  }, [transferList]);
 
     
 
@@ -115,6 +126,25 @@ const TransactionPage = () => {
         try {
           LoaderHelper.loaderStatus(false);
           setTransactionsList(result);
+        } catch (error) {
+          LoaderHelper.loaderStatus(false);
+          //alertErrorMessage(error);
+          //console.log('error', `${error}`);
+        }
+      } else {
+        LoaderHelper.loaderStatus(false);
+        //alertErrorMessage(result.message);
+      }
+    });
+  };
+  const handleTransactionB = async () => {
+    LoaderHelper.loaderStatus(true);
+    await AuthService.getTransactions().then(async (result) => {
+      //console.log(result.data, 'getTransactions');
+      if (Object.keys(result).length > 1) {
+        try {
+          LoaderHelper.loaderStatus(false);
+          setTransferList(result);
         } catch (error) {
           LoaderHelper.loaderStatus(false);
           //alertErrorMessage(error);
@@ -298,7 +328,6 @@ const TransactionPage = () => {
   console.log(checkList);
 
   function dateFilter(startDate, endDate, type1) {
-    clearInterval(myTime);
     let type;
     type = transactionsList.filter((e) => {
       if (e.status.toLowerCase() == type1) {
@@ -615,7 +644,7 @@ const TransactionPage = () => {
                       <button
                         class="btn btn-light btn-block w-100  "
                         type="button"
-                        onClick={() => handleTransaction()}
+                        onClick={() => handleTransactionB()}
                       >
                         Reset
                       </button>
