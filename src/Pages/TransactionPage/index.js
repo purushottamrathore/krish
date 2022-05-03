@@ -86,15 +86,26 @@ const TransactionPage = () => {
       );
       setPendData(data);
     }
-    let data = transactionsList.filter(
+    // let data = transactionsList.filter(
+    //   (item) =>
+    //     moment(item?.createdAt).format("YYYY-MM-DD") ==
+    //     moment(new Date()).format("YYYY-MM-DD")
+    // );
+    // setSuccess(data);
+
+    console.log(transactionsList, "lastJsonMessagerathore");
+  }, [transactionsList]);
+
+    let getData = transactionsList;
+
+  useEffect(() => {
+    let data = getData.filter(
       (item) =>
         moment(item?.createdAt).format("YYYY-MM-DD") ==
         moment(new Date()).format("YYYY-MM-DD")
     );
     setSuccess(data);
-
-    console.log(transactionsList, "lastJsonMessagerathore");
-  }, [transactionsList]);
+  }, [])
 
   const handleTransaction = async () => {
     LoaderHelper.loaderStatus(true);
@@ -631,7 +642,10 @@ const TransactionPage = () => {
                       role="tab"
                       aria-controls="Favourite"
                       aria-selected="true"
-                      onClick={() => setActiveTab("pending")}
+                      onClick={() => {
+                        setActiveTab("pending");
+                        window.location.reload(); 
+                      }}
                     >
                       Pending
                     </button>
@@ -661,6 +675,9 @@ const TransactionPage = () => {
                       role="tab"
                       aria-controls="Balance"
                       aria-selected="false"
+                      onClick={() => {
+                        window.location.reload(); 
+                      }}
                     >
                       Balance History
                     </button>
