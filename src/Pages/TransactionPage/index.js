@@ -46,6 +46,7 @@ const TransactionPage = () => {
   const [date2, setDate2] = useState("");
   const [date3, setDate3] = useState("");
   const [checked, setChecked] = useState(false);
+  var myTime;
 
   const headers = [
     { label: "Transaction Id(Vendor)", key: "transId" },
@@ -69,13 +70,13 @@ const TransactionPage = () => {
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function Interval() {
-    setInterval(() => {
+
+     myTime = setInterval(() => {
       handleTransaction();
       handleBalanceList();
     }, 15000);
-  }
-  useEffect(() => Interval(), []);
+
+  useEffect(() => myTime, []);
 
   useEffect(() => {
     if (transactionsList && Object.keys(transactionsList).length > 0) {
@@ -297,6 +298,7 @@ const TransactionPage = () => {
   console.log(checkList);
 
   function dateFilter(startDate, endDate, type1) {
+    clearInterval(myTime);
     let type;
     type = transactionsList.filter((e) => {
       if (e.status.toLowerCase() == type1) {
