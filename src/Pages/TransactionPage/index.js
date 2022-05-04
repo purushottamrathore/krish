@@ -71,14 +71,10 @@ const TransactionPage = () => {
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
-      // setInterval(() => {
-      //   handleTransaction();
-      //   handleBalanceList();
-      // }, 60000);
-     
-
-
+  // setInterval(() => {
+  //   handleTransaction();
+  //   handleBalanceList();
+  // }, 60000);
 
   useEffect(() => {
     if (transactionsList && Object.keys(transactionsList).length > 0) {
@@ -89,7 +85,7 @@ const TransactionPage = () => {
       );
       setPendData(data);
     }
-    
+
     // let data = transactionsList.filter(
     //   (item) =>
     //     moment(item?.createdAt).format("YYYY-MM-DD") ==
@@ -100,11 +96,10 @@ const TransactionPage = () => {
     console.log(transactionsList, "lastJsonMessagerathore");
   }, [transactionsList]);
 
-
   useEffect(() => {
     if (transferList && Object.keys(transferList).length > 0) {
     }
-    
+
     let data = transferList.filter(
       (item) =>
         moment(item?.createdAt).format("YYYY-MM-DD") ==
@@ -114,9 +109,6 @@ const TransactionPage = () => {
 
     console.log(transferList, "lastJsonMessagerathore");
   }, [transferList]);
-
-    
-
 
   const handleTransaction = async () => {
     LoaderHelper.loaderStatus(true);
@@ -330,13 +322,12 @@ const TransactionPage = () => {
   function dateFilter(startDate, endDate, type1) {
     let type;
     type = transactionsList.filter((e) => {
-      if(type1=="success"){
+      if (type1 == "success") {
         return (
           new Date(e.createdAt) >= new Date(startDate) &&
           new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
         );
-      }
-      else if (e.status.toLowerCase() == type1) {
+      } else if (e.status.toLowerCase() == type1) {
         console.log(type1);
         console.log(startDate, new Date(endDate), new Date(e.createdAt));
         return (
@@ -347,7 +338,7 @@ const TransactionPage = () => {
       //console.log(e, new Date(e.WorkDescription.startDate), this.filterStartDate);
     });
     type1 == "pending" ? setPendData(type) : setSuccess(type);
-    console.log(type, pendData,type1);
+    console.log(type, pendData, type1);
   }
 
   // function productFilter(product, type1) {
@@ -367,7 +358,7 @@ const TransactionPage = () => {
 
   const linkFollow2 = (cell, row, rowIndex, formatExtraData) => {
     return (
-      <div style={{width : "750px"}}>
+      <div style={{ width: "750px" }}>
         <button
           class="btn btn-success btn-sm qwer"
           data-bs-toggle="modal"
@@ -421,7 +412,7 @@ const TransactionPage = () => {
   };
   const linkFollow8 = (cell, row, rowIndex, formatExtraData) => {
     return (
-      <div style={{width: "300px"}}>
+      <div style={{ width: "300px" }}>
         {row?.status?.toLowerCase() == "success" ? (
           <>
             <button
@@ -460,7 +451,7 @@ const TransactionPage = () => {
     return <div>{moment(row?.createdAt).format("MMM DD YYYY h:mm A")}</div>;
   };
   const linkFollow9 = (cell, row, rowIndex, formatExtraData) => {
-    return <div style={{width : "750px"}}>{row?.product}</div>;
+    return <div style={{ width: "750px" }}>{row?.product}</div>;
   };
 
   const columns = [
@@ -474,7 +465,7 @@ const TransactionPage = () => {
     //     },
     { dataField: "transId", text: "Transaction Id(Vendor)" },
     { dataField: "date", text: "Date", formatter: linkFollow4 },
-    { dataField: "product", text: "Product"},
+    { dataField: "product", text: "Product" },
     { dataField: "customer", text: "Customer" },
     { dataField: "amount", text: "Amount" },
     { dataField: "status", text: "Status" },
@@ -575,6 +566,13 @@ const TransactionPage = () => {
     },
   };
 
+  const csvData = pendData.map((d) => {
+    console.log(d.createdAt);
+    d.createdAt = moment(d.createdAt).format("MMM DD YYYY h:mm A");
+    return d;
+    // return Object.keys(d) == "createdAt" ? moment(d).format("YYYY-MM-DD") : "";
+  });
+  console.log(csvData);
   return (
     <>
       <Header />
@@ -583,9 +581,7 @@ const TransactionPage = () => {
           <header className="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
             <div className="container-fluid px-4">
               <div className="page-header-content pt-0">
-                <div className="row align-items-center justify-content-between">
-                  
-                </div>
+                <div className="row align-items-center justify-content-between"></div>
               </div>
             </div>
           </header>
@@ -593,17 +589,18 @@ const TransactionPage = () => {
           <div className="container-fluid px-4 mt-n10">
             <div className="filter_bar">
               <form className="row">
-                <div class="mb-3 col ">{uType == 0 ? (
-                      <button
-                        class="btn btn-primary   btn-block w-100"
-                        type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#addAmount"
-                      >
-                        Add Balance
-                      </button>
-                    ) : undefined}
-                    </div>
+                <div class="mb-3 col ">
+                  {uType == 0 ? (
+                    <button
+                      class="btn btn-primary   btn-block w-100"
+                      type="button"
+                      data-bs-toggle="modal"
+                      data-bs-target="#addAmount"
+                    >
+                      Add Balance
+                    </button>
+                  ) : undefined}
+                </div>
 
                 <div class="mb-3 col "></div>
                 <div class="mb-3 col ">
@@ -705,7 +702,6 @@ const TransactionPage = () => {
                       role="tab"
                       aria-controls="Balance"
                       aria-selected="false"
-
                     >
                       Balance History
                     </button>
@@ -719,7 +715,7 @@ const TransactionPage = () => {
                     aria-labelledby="Favourite-tab"
                   >
                     <CSVLink
-                      data={pendData}
+                      data={csvData}
                       class="btn btn-dark   btn-block mb-3"
                       headers={headers}
                       filename={`pendingData-${new Date()}.csv`}
@@ -742,7 +738,7 @@ const TransactionPage = () => {
                       Deselect All
                     </button> */}
 
-                    <div className="my-3" >
+                    <div className="my-3">
                       <ToolkitProvider
                         hover
                         bootstrap4
