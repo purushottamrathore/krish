@@ -34,8 +34,8 @@ const TransactionPage = () => {
   const [transId, setTransId] = useState("");
   // const uType = localStorage.getItem("uType");
   const [status, setStatus] = useState("");
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
+  const [startDate, setStartDate] = useState(moment().format("YYYY-MM-DD"));
+  const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DD"));
   let [checkList, setCheckList] = useState([]);
   let [pendData, setPendData] = useState([]);
   const [product, setProduct] = useState([]);
@@ -64,18 +64,18 @@ const TransactionPage = () => {
     handleTransaction();
     handleBalanceList();
     handleTransactionB();
-    document.getElementById("litepickerRangePlugin").value =
-      moment().format("YYYY-MM-DD");
-    document.getElementById("litepickerRangePlugin2").value =
-      moment().format("YYYY-MM-DD");
+    // document.getElementById("startDate").value =
+    //   moment().format("YYYY-MM-DD");
+    // document.getElementById("endDate").value =
+    //   moment().format("YYYY-MM-DD");
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
-      setInterval(() => {
-        handleTransaction();
-        handleBalanceList();
-      }, 15000);
+      // setInterval(() => {
+      //   handleTransaction();
+      //   handleBalanceList();
+      // }, 60000);
      
 
 
@@ -610,7 +610,7 @@ const TransactionPage = () => {
                     type="date"
                     class="form-control form-control-solid"
                     data-provide="datepicker"
-                    id="litepickerRangePlugin"
+                    id="startDate"
                     value={startDate}
                     placeholder="Select date range..."
                     onChange={(event) => setStartDate(event.target.value)}
@@ -621,7 +621,7 @@ const TransactionPage = () => {
                     type="date"
                     class="form-control form-control-solid"
                     data-provide="datepicker"
-                    id="litepickerRangePlugin2"
+                    id="endDate"
                     value={endDate}
                     placeholder="Select date range..."
                     onChange={(event) => setEndDate(event.target.value)}
