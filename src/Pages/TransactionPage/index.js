@@ -367,7 +367,7 @@ const TransactionPage = () => {
 
   const linkFollow2 = (cell, row, rowIndex, formatExtraData) => {
     return (
-      <div>
+      <div style={{width : "750px"}}>
         <button
           class="btn btn-success btn-sm qwer"
           data-bs-toggle="modal"
@@ -377,7 +377,7 @@ const TransactionPage = () => {
           Approve
         </button>
         <button
-          className="btn btn-danger btn-sm mt-1"
+          className="btn btn-danger btn-sm m-1"
           data-bs-toggle="modal"
           data-bs-target="#reject"
           onClick={() => handleSaveData(row?._id, row?.transId, 0)}
@@ -385,7 +385,7 @@ const TransactionPage = () => {
           Reject
         </button>
         <button
-          className="btn btn-primary btn-sm mtl-1"
+          className="btn btn-primary btn-sm m-1"
           data-bs-toggle="modal"
           data-bs-target="#refList"
           onClick={() => handleSaveData(row?._id, row?.transId, 2)}
@@ -421,7 +421,7 @@ const TransactionPage = () => {
   };
   const linkFollow8 = (cell, row, rowIndex, formatExtraData) => {
     return (
-      <div>
+      <div style={{width: "300px"}}>
         {row?.status?.toLowerCase() == "success" ? (
           <>
             <button
@@ -433,7 +433,7 @@ const TransactionPage = () => {
               Pending
             </button>
             <button
-              class="btn btn-danger btn-sm qwer mt-1"
+              class="btn btn-danger btn-sm qwer m-1"
               data-bs-toggle="modal"
               data-bs-target="#successAction"
               onClick={() => handleSaveData(row?._id, row?.transId, 0)}
@@ -459,6 +459,9 @@ const TransactionPage = () => {
   const linkFollow6 = (cell, row, rowIndex, formatExtraData) => {
     return <div>{moment(row?.createdAt).format("MMM DD YYYY h:mm A")}</div>;
   };
+  const linkFollow9 = (cell, row, rowIndex, formatExtraData) => {
+    return <div style={{width : "750px"}}>{row?.product}</div>;
+  };
 
   const columns = [
     // uType == 1
@@ -471,7 +474,7 @@ const TransactionPage = () => {
     //     },
     { dataField: "transId", text: "Transaction Id(Vendor)" },
     { dataField: "date", text: "Date", formatter: linkFollow4 },
-    { dataField: "product", text: "Product" },
+    { dataField: "product", text: "Product"},
     { dataField: "customer", text: "Customer" },
     { dataField: "amount", text: "Amount" },
     { dataField: "status", text: "Status" },
@@ -578,19 +581,19 @@ const TransactionPage = () => {
       <div id="layoutSidenav_content">
         <main>
           <header className="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
-            <div className="container-xl px-4">
-              <div className="page-header-content pt-4">
+            <div className="container-fluid px-4">
+              <div className="page-header-content pt-0">
                 <div className="row align-items-center justify-content-between">
-                  <div className="col-auto mt-4">
-                    <h1 className="page-header-title">
-                      <div className="page-header-icon">
-                        <i data-feather="activity"></i>
-                      </div>
-                      Transaction
-                    </h1>
-                  </div>
-                  <div className="col-auto mt-4">
-                    {uType == 0 ? (
+                  
+                </div>
+              </div>
+            </div>
+          </header>
+          {/* Main page content */}
+          <div className="container-fluid px-4 mt-n10">
+            <div className="filter_bar">
+              <form className="row">
+                <div class="mb-3 col ">{uType == 0 ? (
                       <button
                         class="btn btn-primary   btn-block w-100"
                         type="button"
@@ -600,16 +603,8 @@ const TransactionPage = () => {
                         Add Balance
                       </button>
                     ) : undefined}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </header>
-          {/* Main page content */}
-          <div className="container-xl px-4 mt-n10">
-            <div className="filter_bar">
-              <form className="row">
-                <div class="mb-3 col "></div>
+                    </div>
+
                 <div class="mb-3 col "></div>
                 <div class="mb-3 col ">
                   <input
@@ -747,7 +742,7 @@ const TransactionPage = () => {
                       Deselect All
                     </button> */}
 
-                    <div class="my-3">
+                    <div className="my-3" >
                       <ToolkitProvider
                         hover
                         bootstrap4
