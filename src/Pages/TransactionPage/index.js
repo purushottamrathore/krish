@@ -330,7 +330,13 @@ const TransactionPage = () => {
   function dateFilter(startDate, endDate, type1) {
     let type;
     type = transactionsList.filter((e) => {
-      if (e.status.toLowerCase() == type1) {
+      if(type1=="success"){
+        return (
+          new Date(e.createdAt) >= new Date(startDate) &&
+          new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
+        );
+      }
+      else if (e.status.toLowerCase() == type1) {
         console.log(type1);
         console.log(startDate, new Date(endDate), new Date(e.createdAt));
         return (
@@ -341,7 +347,7 @@ const TransactionPage = () => {
       //console.log(e, new Date(e.WorkDescription.startDate), this.filterStartDate);
     });
     type1 == "pending" ? setPendData(type) : setSuccess(type);
-    console.log(type, pendData);
+    console.log(type, pendData,type1);
   }
 
   // function productFilter(product, type1) {
