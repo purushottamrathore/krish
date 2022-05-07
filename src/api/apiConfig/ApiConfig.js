@@ -1,4 +1,4 @@
-const appUrl = "http://142.93.133.244";
+const appUrl = "https://brandmart.herokuapp.com";
 
 export const ApiConfig = {
   // =========EndPoints==========
