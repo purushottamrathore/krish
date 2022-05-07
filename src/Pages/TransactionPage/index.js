@@ -573,6 +573,13 @@ const TransactionPage = () => {
     // return Object.keys(d) == "createdAt" ? moment(d).format("YYYY-MM-DD") : "";
   });
   console.log(csvData);
+  const csvData2 = success.map((d) => {
+    console.log(d.createdAt);
+    d.createdAt = moment(d.createdAt).format("MMM DD YYYY h:mm A");
+    return d;
+    // return Object.keys(d) == "createdAt" ? moment(d).format("YYYY-MM-DD") : "";
+  });
+  console.log(csvData2);
   return (
     <>
       <Header />
@@ -786,7 +793,7 @@ const TransactionPage = () => {
                     aria-labelledby="Spot-tab"
                   >
                     <CSVLink
-                      data={success}
+                      data={csvData2}
                       class="btn btn-dark   btn-block mb-3"
                       headers={headers}
                       filename={`transList-${new Date()}.csv`}
