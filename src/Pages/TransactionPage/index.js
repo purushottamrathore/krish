@@ -168,13 +168,25 @@ const TransactionPage = () => {
     });
   };
 
+  var bal = 0;
+
   const handleLedgerList = async () => {
     LoaderHelper.loaderStatus(true);
     await AuthService.getLedgerList().then(async (result) => {
       if (result.length > 0) {
         try {
           LoaderHelper.loaderStatus(false);
+          result.map((item) => {
+            if (item?.transType == "Debit") {
+              item.bal = bal - item?.amount;
+              bal = bal - item?.amount;
+            } else {
+              item.bal = bal + item?.amount;
+              bal = bal + item?.amount;
+            }
+          });
           setLedgerList(result);
+          // handleLedgerBal(result);
         } catch (error) {
           LoaderHelper.loaderStatus(false);
           //alertErrorMessage(error);
@@ -186,6 +198,17 @@ const TransactionPage = () => {
       }
     });
   };
+
+  // const handleLedgerBal = (result) => {
+  //   let type = result.map((item) =>
+  //     item?.transType == "Debit"
+  //       ? (bal = bal - item?.amount)
+  //       : (bal = bal + item?.amount)
+  //   );
+  //   setLedgerList(type);
+  // };
+
+  console.log(ledgerList, "ledgerList");
 
   const handleActionTrans = async (id, transId, status, refId) => {
     LoaderHelper.loaderStatus(true);
@@ -517,13 +540,7 @@ const TransactionPage = () => {
   };
 
   const linkFollow13 = (cell, row, rowIndex, formatExtraData) => {
-    return (
-      <div>
-        {row?.transType == "Debit"
-          ? (bal = bal - row?.amount)
-          : (bal = bal + row?.amount)}
-      </div>
-    );
+    return <div>{row?.bal}</div>;
   };
 
   const columns = [
@@ -583,8 +600,6 @@ const TransactionPage = () => {
           hidden: true,
         },
   ];
-
-  var bal = 0;
 
   const columnssss = [
     { dataField: "date", text: "Date", formatter: linkFollow6 },
