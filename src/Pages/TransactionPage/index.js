@@ -348,7 +348,15 @@ const TransactionPage = () => {
           new Date(e.createdAt) >= new Date(startDate) &&
           new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
         );
-      } else if (e.status.toLowerCase() == type1) {
+      } else if (e.status.toLowerCase() == "pending") {
+        console.log(type1);
+        console.log(startDate, new Date(endDate), new Date(e.createdAt));
+        return (
+          new Date(e.createdAt) >= new Date(startDate) &&
+          new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
+        );
+      }
+      else if (e.status.toLowerCase() == "ledger") {
         console.log(type1);
         console.log(startDate, new Date(endDate), new Date(e.createdAt));
         return (
@@ -358,7 +366,16 @@ const TransactionPage = () => {
       }
       //console.log(e, new Date(e.WorkDescription.startDate), this.filterStartDate);
     });
-    type1 == "pending" ? setPendData(type) : setSuccess(type);
+
+    if(type1 == "pending") {
+      setPendData(type)
+    }else if(type1 == "success") {
+      setSuccess(type)
+    }else if(type1 == "ledger") {
+      setLedgerList(type)
+    }
+    
+    // type1 == "pending" ? setPendData(type) : type1 == "success" ? setSuccess(type) : type1 == "ledger" ? setLedgerList(type) : undefined;
     console.log(type, pendData, type1);
   }
 
@@ -477,12 +494,22 @@ const TransactionPage = () => {
   };
 
   const linkFollow10 = (cell, row, rowIndex, formatExtraData) => {
-    return <div>{row?.transType == "Credit" || row?.status == "Rejected" ? row?.amount: ""}
+    return <div>{row?.transType == "Credit" ? row?.amount: ""}
     </div>;
   };
 
   const linkFollow11 = (cell, row, rowIndex, formatExtraData) => {
     return <div>{row?.transType == "Debit" ? row?.amount: "" ? row?.amount: ""}
+    </div>;
+  };
+
+  const linkFollow12 = (cell, row, rowIndex, formatExtraData) => {
+    return <div>{row?.product},{row?.customer},{row?.transId}
+    </div>;
+  };
+
+  const linkFollow13 = (cell, row, rowIndex, formatExtraData) => {
+    return <div>{row?.transType == "Debit" ? bal = bal - row?.amount : bal = bal + row?.amount}
     </div>;
   };
 
@@ -544,12 +571,17 @@ const TransactionPage = () => {
         },
   ];
 
+  var bal = 0;
+
   const columnssss = [
     { dataField: "date", text: "Date", formatter: linkFollow6 },
+    { dataField: "refNo", text: "Our Referrance No." },
+    { dataField: "Nrt", text: "Narration", formatter: linkFollow12 },
     { dataField: "credit", text: "Credit", formatter: linkFollow10 },
     { dataField: "debit", text: "Debit", formatter: linkFollow11 },
     { dataField: "utrNo", text: "UTR NO." },
-    { dataField: "refNo", text: "Our Referrance No." },
+    { dataField: "bal", text: "Balance", formatter: linkFollow13 },
+    
   ]
 
   const pagination = paginationFactory({
@@ -763,6 +795,7 @@ const TransactionPage = () => {
                       role="tab"
                       aria-controls="Ledger"
                       aria-selected="false"
+                      onClick={() => setActiveTab("ledger")}
                     >
                       Ledger Statement
                     </button>
