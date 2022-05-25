@@ -187,7 +187,6 @@ const TransactionPage = () => {
     });
   };
 
-
   const handleActionTrans = async (id, transId, status, refId) => {
     LoaderHelper.loaderStatus(true);
     await AuthService.getActionTrans(id, transId, status, refId).then(
@@ -343,7 +342,7 @@ const TransactionPage = () => {
   function dateFilter(startDate, endDate, type1) {
     let type;
     type = transactionsList.filter((e) => {
-      if (type1 == "success") {
+      if (e.status.toLowerCase() == "success") {
         return (
           new Date(e.createdAt) >= new Date(startDate) &&
           new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
@@ -356,7 +355,12 @@ const TransactionPage = () => {
           new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
         );
       }
-      else if (e.status.toLowerCase() == "ledger") {
+      //console.log(e, new Date(e.WorkDescription.startDate), this.filterStartDate);
+    });
+
+    let type2;
+    type2 = ledgerList.filter((e) => {
+      if (type1 == "ledger") {
         console.log(type1);
         console.log(startDate, new Date(endDate), new Date(e.createdAt));
         return (
@@ -364,17 +368,16 @@ const TransactionPage = () => {
           new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
         );
       }
-      //console.log(e, new Date(e.WorkDescription.startDate), this.filterStartDate);
     });
 
-    if(type1 == "pending") {
-      setPendData(type)
-    }else if(type1 == "success") {
-      setSuccess(type)
-    }else if(type1 == "ledger") {
-      setLedgerList(type)
+    if (type1 == "pending") {
+      setPendData(type);
+    } else if (type1 == "success") {
+      setSuccess(type);
+    } else if (type1 == "ledger") {
+      setLedgerList(type2);
     }
-    
+
     // type1 == "pending" ? setPendData(type) : type1 == "success" ? setSuccess(type) : type1 == "ledger" ? setLedgerList(type) : undefined;
     console.log(type, pendData, type1);
   }
@@ -494,23 +497,33 @@ const TransactionPage = () => {
   };
 
   const linkFollow10 = (cell, row, rowIndex, formatExtraData) => {
-    return <div>{row?.transType == "Credit" ? row?.amount: ""}
-    </div>;
+    return <div>{row?.transType == "Credit" ? row?.amount : ""}</div>;
   };
 
   const linkFollow11 = (cell, row, rowIndex, formatExtraData) => {
-    return <div>{row?.transType == "Debit" ? row?.amount: "" ? row?.amount: ""}
-    </div>;
+    return (
+      <div>
+        {row?.transType == "Debit" ? row?.amount : "" ? row?.amount : ""}
+      </div>
+    );
   };
 
   const linkFollow12 = (cell, row, rowIndex, formatExtraData) => {
-    return <div>{row?.product},{row?.customer},{row?.transId}
-    </div>;
+    return (
+      <div>
+        {row?.product},{row?.customer},{row?.transId}
+      </div>
+    );
   };
 
   const linkFollow13 = (cell, row, rowIndex, formatExtraData) => {
-    return <div>{row?.transType == "Debit" ? bal = bal - row?.amount : bal = bal + row?.amount}
-    </div>;
+    return (
+      <div>
+        {row?.transType == "Debit"
+          ? (bal = bal - row?.amount)
+          : (bal = bal + row?.amount)}
+      </div>
+    );
   };
 
   const columns = [
@@ -581,8 +594,7 @@ const TransactionPage = () => {
     { dataField: "debit", text: "Debit", formatter: linkFollow11 },
     { dataField: "utrNo", text: "UTR NO." },
     { dataField: "bal", text: "Balance", formatter: linkFollow13 },
-    
-  ]
+  ];
 
   const pagination = paginationFactory({
     page: 1,
@@ -966,10 +978,10 @@ const TransactionPage = () => {
                     </div>
                   </div>
                   <div
-                  className="tab-pane fade"
-                  id="Ledger"
-                  role="tabpanel"
-                  aria-labelledby="Ledger-tab"
+                    className="tab-pane fade"
+                    id="Ledger"
+                    role="tabpanel"
+                    aria-labelledby="Ledger-tab"
                   >
                     <CSVLink
                       data={balList}
@@ -1009,7 +1021,7 @@ const TransactionPage = () => {
                           </React.Fragment>
                         )}
                       </ToolkitProvider>
-                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
