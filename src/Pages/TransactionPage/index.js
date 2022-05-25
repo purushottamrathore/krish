@@ -48,9 +48,6 @@ const TransactionPage = () => {
   const [date3, setDate3] = useState("");
   const [checked, setChecked] = useState(false);
   const [ledgerList, setLedgerList] = useState([]);
-  const [creditAmt, setCreditAmt] = useState("");
-  const [debitAmt, setDebitAmt] = useState("");
-
   const headers = [
     { label: "Transaction Id(Vendor)", key: "transId" },
     { label: "Date", key: "createdAt" },
@@ -189,6 +186,7 @@ const TransactionPage = () => {
       }
     });
   };
+
 
   const handleActionTrans = async (id, transId, status, refId) => {
     LoaderHelper.loaderStatus(true);
@@ -479,11 +477,13 @@ const TransactionPage = () => {
   };
 
   const linkFollow10 = (cell, row, rowIndex, formatExtraData) => {
-    return <div>{row?.transType == "Credit" || row?.status == "Rejected" ? <div>{row?.amount}</div> : <div></div>}</div>;
+    return <div>{row?.transType == "Credit" || row?.status == "Rejected" ? row?.amount: ""}
+    </div>;
   };
 
   const linkFollow11 = (cell, row, rowIndex, formatExtraData) => {
-    return <div>{row?.transType == "Debit" || row?.status == "Rejected" ? <div>{row?.amount}</div> : <div></div>}</div>;
+    return <div>{row?.transType == "Debit" ? row?.amount: "" ? row?.amount: ""}
+    </div>;
   };
 
   const columns = [
@@ -546,8 +546,8 @@ const TransactionPage = () => {
 
   const columnssss = [
     { dataField: "date", text: "Date", formatter: linkFollow6 },
-    { dataField: "creditAmt", text: "Credit", formatter: linkFollow10 },
-    { dataField: "debitAmt", text: "Debit", formatter: linkFollow11 },
+    { dataField: "credit", text: "Credit", formatter: linkFollow10 },
+    { dataField: "debit", text: "Debit", formatter: linkFollow11 },
     { dataField: "utrNo", text: "UTR NO." },
     { dataField: "refNo", text: "Our Referrance No." },
   ]
