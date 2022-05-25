@@ -47,6 +47,9 @@ const TransactionPage = () => {
   const [date2, setDate2] = useState("");
   const [date3, setDate3] = useState("");
   const [checked, setChecked] = useState(false);
+  const [ledgerList, setLedgerList] = useState([]);
+  const [creditAmt, setCreditAmt] = useState("");
+  const [debitAmt, setDebitAmt] = useState("");
 
   const headers = [
     { label: "Transaction Id(Vendor)", key: "transId" },
@@ -64,6 +67,7 @@ const TransactionPage = () => {
     handleTransaction();
     handleBalanceList();
     handleTransactionB();
+    handleLedgerList();
     // document.getElementById("startDate").value =
     //   moment().format("YYYY-MM-DD");
     // document.getElementById("endDate").value =
@@ -155,6 +159,25 @@ const TransactionPage = () => {
         try {
           LoaderHelper.loaderStatus(false);
           setBalList(result.data);
+        } catch (error) {
+          LoaderHelper.loaderStatus(false);
+          //alertErrorMessage(error);
+          //console.log('error', `${error}`);
+        }
+      } else {
+        LoaderHelper.loaderStatus(false);
+        //alertErrorMessage(result.message);
+      }
+    });
+  };
+
+  const handleLedgerList = async () => {
+    LoaderHelper.loaderStatus(true);
+    await AuthService.getLedgerList().then(async (result) => {
+      if (result.length > 0) {
+        try {
+          LoaderHelper.loaderStatus(false);
+          setLedgerList(result);
         } catch (error) {
           LoaderHelper.loaderStatus(false);
           //alertErrorMessage(error);
@@ -450,8 +473,17 @@ const TransactionPage = () => {
   const linkFollow6 = (cell, row, rowIndex, formatExtraData) => {
     return <div>{moment(row?.createdAt).format("MMM DD YYYY h:mm A")}</div>;
   };
+
   const linkFollow9 = (cell, row, rowIndex, formatExtraData) => {
     return <div style={{ width: "750px" }}>{row?.product}</div>;
+  };
+
+  const linkFollow10 = (cell, row, rowIndex, formatExtraData) => {
+    return <div>{row?.transType == "Credit" || row?.status == "Rejected" ? <div>{row?.amount}</div> : <div></div>}</div>;
+  };
+
+  const linkFollow11 = (cell, row, rowIndex, formatExtraData) => {
+    return <div>{row?.transType == "Debit" || row?.status == "Rejected" ? <div>{row?.amount}</div> : <div></div>}</div>;
   };
 
   const columns = [
@@ -511,6 +543,14 @@ const TransactionPage = () => {
           hidden: true,
         },
   ];
+
+  const columnssss = [
+    { dataField: "date", text: "Date", formatter: linkFollow6 },
+    { dataField: "creditAmt", text: "Credit", formatter: linkFollow10 },
+    { dataField: "debitAmt", text: "Debit", formatter: linkFollow11 },
+    { dataField: "utrNo", text: "UTR NO." },
+    { dataField: "refNo", text: "Our Referrance No." },
+  ]
 
   const pagination = paginationFactory({
     page: 1,
@@ -713,6 +753,20 @@ const TransactionPage = () => {
                       Balance History
                     </button>
                   </li>
+                  <li className="nav-item" role="presentation">
+                    <button
+                      className="nav-link"
+                      id="Ledger-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#Ledger"
+                      type="button"
+                      role="tab"
+                      aria-controls="Ledger"
+                      aria-selected="false"
+                    >
+                      Ledger Statement
+                    </button>
+                  </li>
                 </ul>
                 <div className="tab-content" id="myTabContent">
                   <div
@@ -877,6 +931,52 @@ const TransactionPage = () => {
                         )}
                       </ToolkitProvider>
                     </div>
+                  </div>
+                  <div
+                  className="tab-pane fade"
+                  id="Ledger"
+                  role="tabpanel"
+                  aria-labelledby="Ledger-tab"
+                  >
+                    <CSVLink
+                      data={balList}
+                      class="btn btn-dark   btn-block mb-3"
+                      // headers={headers}
+                      filename={`transList-${new Date()}.csv`}
+                      style={{ float: "right" }}
+                    >
+                      Download me
+                    </CSVLink>
+                    <div class="my-3">
+                      <ToolkitProvider
+                        hover
+                        bootstrap4
+                        keyField="_id"
+                        columns={columnssss}
+                        data={ledgerList}
+                        search={{
+                          afterSearch: (newResult) => console.log(newResult),
+                        }}
+                      >
+                        {(props) => (
+                          <React.Fragment>
+                            <SearchBar {...props.searchProps} />
+
+                            {/* <hr /> */}
+                            <BootstrapTable
+                              hover
+                              bootstrap4
+                              keyField="_id"
+                              columns={columnssss}
+                              data={ledgerList}
+                              pagination={pagination}
+                              filter={filterFactory()}
+                              {...props.baseProps}
+                            />
+                          </React.Fragment>
+                        )}
+                      </ToolkitProvider>
+                      </div>
                   </div>
                 </div>
               </div>

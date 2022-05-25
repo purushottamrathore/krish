@@ -197,6 +197,24 @@ const AuthService = {
 
     return ApiCallPost(url, params, headers);
   },
+
+  getLedgerList: async () => {
+    const token = localStorage.getItem("token");
+    const { baseUrl, getLedgerList } = ApiConfig;
+
+    const url = baseUrl + getLedgerList;
+
+    const params = {};
+
+    ConsoleLogs(TAG + ", getLedgerList", `url : ' + ${url}`);
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: token,
+    };
+
+    return ApiCallPost(url, params, headers);
+  },
 };
 
 export default AuthService;

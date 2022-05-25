@@ -11,6 +11,7 @@ export const ApiConfig = {
   getBalanceList: "getballist",
   getBalanceAction: "balconfirm",
   getBalanceAction2: "updatetrans",
+  getLedgerList: "getdt",
 
   baseUrl: `${appUrl}/api/`,
 };
