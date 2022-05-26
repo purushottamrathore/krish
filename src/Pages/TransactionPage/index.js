@@ -174,6 +174,15 @@ const TransactionPage = () => {
       if (result.length > 0) {
         try {
           LoaderHelper.loaderStatus(false);
+          result.map(item => {
+            if(item?.transType == "Debit") {
+              item.bal = bal = bal - item?.amount
+              bal = bal = bal - item?.amount
+            }else {
+              item.bal = bal = bal + item?.amount
+              bal = bal = bal + item?.amount
+            }
+          })
           setLedgerList(result);
         } catch (error) {
           LoaderHelper.loaderStatus(false);
@@ -519,9 +528,7 @@ const TransactionPage = () => {
   const linkFollow13 = (cell, row, rowIndex, formatExtraData) => {
     return (
       <div>
-        {row?.transType == "Debit"
-          ? (bal = bal - row?.amount)
-          : (bal = bal + row?.amount)}
+        {row?.bal}
       </div>
     );
   };
