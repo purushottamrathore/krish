@@ -351,19 +351,12 @@ const TransactionPage = () => {
   function dateFilter(startDate, endDate, type1) {
     let type;
     type = transactionsList.filter((e) => {
-      if (e.status.toLowerCase() == "success") {
+      if (type1 == "success") {
         return (
           new Date(e.createdAt) >= new Date(startDate) &&
           new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
         );
-      } else if (e.status.toLowerCase() == "pending") {
-        console.log(type1);
-        console.log(startDate, new Date(endDate), new Date(e.createdAt));
-        return (
-          new Date(e.createdAt) >= new Date(startDate) &&
-          new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
-        );
-      }
+      } 
       //console.log(e, new Date(e.WorkDescription.startDate), this.filterStartDate);
     });
 
