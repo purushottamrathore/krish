@@ -183,7 +183,7 @@ const TransactionPage = () => {
               bal = bal + item?.amount
             }
           })
-          setLedgerList(result);
+          setLedgerList(result.reverse());
         } catch (error) {
           LoaderHelper.loaderStatus(false);
           //alertErrorMessage(error);
