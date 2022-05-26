@@ -176,10 +176,10 @@ const TransactionPage = () => {
           LoaderHelper.loaderStatus(false);
           result.map(item => {
             if(item?.transType == "Debit") {
-              item.bal = bal = bal - item?.amount
+              item.bal = bal - item?.amount
               bal = bal - item?.amount
             }else {
-              item.bal = bal = bal + item?.amount
+              item.bal = bal + item?.amount
               bal = bal + item?.amount
             }
           })
