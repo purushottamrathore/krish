@@ -185,7 +185,7 @@ const TransactionPage = () => {
               bal = bal + item?.amount;
             }
           });
-          setLedgerList(result);
+          setLedgerList(result.reverse());
           // handleLedgerBal(result);
         } catch (error) {
           LoaderHelper.loaderStatus(false);
@@ -386,9 +386,7 @@ const TransactionPage = () => {
       }
     });
 
-    if (type1 == "pending") {
-      setPendData(type);
-    } else if (type1 == "success") {
+    if (type1 == "success") {
       setSuccess(type);
     } else if (type1 == "ledger") {
       setLedgerList(type2);
@@ -536,6 +534,16 @@ const TransactionPage = () => {
     return <div>{row?.bal}</div>;
   };
 
+  const linkFollow14 = (cell, row, rowIndex, formatExtraData) => {
+    return (
+      <div>
+        {row?.status == "Rejected"
+          ? moment(row?.updatedAt).format("MMM DD YYYY h:mm A")
+          : ""}
+      </div>
+    );
+  };
+
   const columns = [
     // uType == 1
     //   ? { dataField: "select", text: "Select", formatter: linkFollow }
@@ -569,6 +577,7 @@ const TransactionPage = () => {
     { dataField: "customer", text: "Customer" },
     { dataField: "amount", text: "Amount" },
     { dataField: "status", text: "Status" },
+    { dataField: "date", text: "Update Date", formatter: linkFollow14 },
     { dataField: "refNo", text: "Our Referrance No." },
     uType == 1
       ? { dataField: "Action", text: "Action", formatter: linkFollow8 }
