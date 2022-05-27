@@ -65,41 +65,25 @@ const TransactionPage = () => {
     handleBalanceList();
     handleTransactionB();
     handleLedgerList();
-    // document.getElementById("startDate").value =
-    //   moment().format("YYYY-MM-DD");
-    // document.getElementById("endDate").value =
-    //   moment().format("YYYY-MM-DD");
-    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // setInterval(() => {
-  //   handleTransaction();
-  //   handleBalanceList();
-  // }, 60000);
+
 
   useEffect(() => {
     if (transactionsList && Object.keys(transactionsList).length > 0) {
+    
       let data = transactionsList.filter(
         (item) =>
           item?.status?.toLowerCase() === "pending" ||
           item?.status?.toLowerCase() === "inprogress"
       );
       setPendData(data);
-    }
-
-    // let data = transactionsList.filter(
-    //   (item) =>
-    //     moment(item?.createdAt).format("YYYY-MM-DD") ==
-    //     moment(new Date()).format("YYYY-MM-DD")
-    // );
-    // setSuccess(data);
-
+      }
     console.log(transactionsList, "lastJsonMessagerathore");
   }, [transactionsList]);
 
   useEffect(() => {
     if (transferList && Object.keys(transferList).length > 0) {
-    }
 
     let data = transferList.filter(
       (item) =>
@@ -107,14 +91,14 @@ const TransactionPage = () => {
         moment(new Date()).format("YYYY-MM-DD")
     );
     setSuccess(data);
-
+    }
     console.log(transferList, "lastJsonMessagerathore");
   }, [transferList]);
 
   const handleTransaction = async () => {
     LoaderHelper.loaderStatus(true);
     await AuthService.getTransactions().then(async (result) => {
-      //console.log(result.data, 'getTransactions');
+      console.log(result, 'getTransactions');
       if (Object.keys(result).length > 1) {
         try {
           LoaderHelper.loaderStatus(false);
@@ -351,14 +335,7 @@ const TransactionPage = () => {
   function dateFilter(startDate, endDate, type1) {
     let type;
     type = transactionsList.filter((e) => {
-      if (e.status.toLowerCase() == "success") {
-        return (
-          new Date(e.createdAt) >= new Date(startDate) &&
-          new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
-        );
-      } else if (e.status.toLowerCase() == "pending") {
-        console.log(type1);
-        console.log(startDate, new Date(endDate), new Date(e.createdAt));
+      if (type1 === "success") {
         return (
           new Date(e.createdAt) >= new Date(startDate) &&
           new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
@@ -379,24 +356,16 @@ const TransactionPage = () => {
       }
     });
 
-    if (type1 == "pending") {
-      setPendData(type);
-    } else if (type1 == "success") {
+   if (type1 === "success") {
       setSuccess(type);
-    } else if (type1 == "ledger") {
+    } else if (type1 === "ledger") {
       setLedgerList(type2);
     }
 
-    // type1 == "pending" ? setPendData(type) : type1 == "success" ? setSuccess(type) : type1 == "ledger" ? setLedgerList(type) : undefined;
-    console.log(type, pendData, type1);
+
   }
 
-  // function productFilter(product, type1) {
-  //   let type;
-  //   type = transactionsList.filter((e) => e?.product?.toLowerCase() == product);
-  //   type1 == "pending" ? setPendData(type) : setSuccess(type);
-  //   console.log(type, pendData);
-  // }
+
 
   const linkFollow = (cell, row, rowIndex, formatExtraData) => {
     return (
@@ -533,6 +502,14 @@ const TransactionPage = () => {
     );
   };
 
+  const linkFollow14 = (cell, row, rowIndex, formatExtraData) => {
+    return (
+      <div>
+        {row?.status === "Rejected" ? moment(row?.updatedAt).format("MMM DD YYYY h:mm A") : ""}
+      </div>
+    );
+  };
+
   const columns = [
     // uType == 1
     //   ? { dataField: "select", text: "Select", formatter: linkFollow }
@@ -566,6 +543,7 @@ const TransactionPage = () => {
     { dataField: "customer", text: "Customer" },
     { dataField: "amount", text: "Amount" },
     { dataField: "status", text: "Status" },
+    { dataField: "Update", text: "Update Date", formatter: linkFollow14 },
     { dataField: "refNo", text: "Our Referrance No." },
     uType == 1
       ? { dataField: "Action", text: "Action", formatter: linkFollow8 }
@@ -670,7 +648,7 @@ const TransactionPage = () => {
     return d;
     // return Object.keys(d) == "createdAt" ? moment(d).format("YYYY-MM-DD") : "";
   });
-  console.log(csvData2);
+  console.log(pendData, "pending");
   return (
     <>
       <Header />
