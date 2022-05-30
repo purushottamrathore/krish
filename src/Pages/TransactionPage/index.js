@@ -152,22 +152,25 @@ const TransactionPage = () => {
     });
   };
 
+  var bal = 0;
+
   const handleLedgerList = async () => {
     LoaderHelper.loaderStatus(true);
     await AuthService.getLedgerList().then(async (result) => {
       if (result.length > 0) {
         try {
           LoaderHelper.loaderStatus(false);
-          result.map(item => {
-            if(item?.transType == "Debit") {
-              item.bal = bal - item?.amount
-              bal = bal - item?.amount
-            }else {
-              item.bal = bal + item?.amount
-              bal = bal + item?.amount
+          result.map((item) => {
+            if (item?.transType == "Debit") {
+              item.bal = bal - item?.amount;
+              bal = bal - item?.amount;
+            } else {
+              item.bal = bal + item?.amount;
+              bal = bal + item?.amount;
             }
-          })
+          });
           setLedgerList(result.reverse());
+          // handleLedgerBal(result);
         } catch (error) {
           LoaderHelper.loaderStatus(false);
           //alertErrorMessage(error);
@@ -179,6 +182,17 @@ const TransactionPage = () => {
       }
     });
   };
+
+  // const handleLedgerBal = (result) => {
+  //   let type = result.map((item) =>
+  //     item?.transType == "Debit"
+  //       ? (bal = bal - item?.amount)
+  //       : (bal = bal + item?.amount)
+  //   );
+  //   setLedgerList(type);
+  // };
+
+  console.log(ledgerList, "ledgerList");
 
   const handleActionTrans = async (id, transId, status, refId) => {
     LoaderHelper.loaderStatus(true);
@@ -495,20 +509,20 @@ const TransactionPage = () => {
   };
 
   const linkFollow13 = (cell, row, rowIndex, formatExtraData) => {
-    return (
-      <div>
-        {row?.bal}
-      </div>
-    );
+    return <div>{row?.bal}</div>;
   };
 
   const linkFollow14 = (cell, row, rowIndex, formatExtraData) => {
     return (
       <div>
-        {row?.status === "Rejected" ? moment(row?.updatedAt).format("MMM DD YYYY h:mm A") : ""}
+        {row?.status == "Rejected"
+          ? moment(row?.updatedAt).format("MMM DD YYYY h:mm A")
+          : ""}
       </div>
     );
   };
+
+
 
   const columns = [
     // uType == 1
@@ -568,8 +582,6 @@ const TransactionPage = () => {
           hidden: true,
         },
   ];
-
-  var bal = 0;
 
   const columnssss = [
     { dataField: "date", text: "Date", formatter: linkFollow6 },
