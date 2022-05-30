@@ -40,7 +40,7 @@ const TransactionPage = () => {
   let [pendData, setPendData] = useState([]);
   const [product, setProduct] = useState([]);
   let [success, setSuccess] = useState([]);
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState("");
   const [password, setPassword] = useState("");
   const [balList, setBalList] = useState([]);
   const [date, setDate] = useState("");
