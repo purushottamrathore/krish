@@ -64,12 +64,13 @@ const TransactionPage = () => {
   const headerss = [
     { label: "Date", key: "createdAt" },
     { label: "Our Referrance No.", key: "refNo" },
-    { label: "Amount", key: "amount" },
     { label: "Email", key: "email" },
     { label: "Status", key: "status" },
     { label: "UTR NO.", key: "utrNo" },
     { label: "Narration", key: "product" },
-    { label: "Transaction Type", key: "transType" },
+    { label: "Balance", key: "bal" },
+    { label: "Credit", key: "creditAmount" },
+    { label: "Debit", key: "debitAmount" },
   ];
 
   useEffect(() => {
@@ -171,9 +172,11 @@ const TransactionPage = () => {
           result.map((item) => {
             if (item?.transType == "Debit") {
               item.bal = bal - item?.amount;
+              item.debitAmount = item?.amount;
               bal = bal - item?.amount;
             } else {
               item.bal = bal + item?.amount;
+              item.creditAmount = item?.amount;
               bal = bal + item?.amount;
             }
           });
@@ -190,15 +193,6 @@ const TransactionPage = () => {
       }
     });
   };
-
-  // const handleLedgerBal = (result) => {
-  //   let type = result.map((item) =>
-  //     item?.transType == "Debit"
-  //       ? (bal = bal - item?.amount)
-  //       : (bal = bal + item?.amount)
-  //   );
-  //   setLedgerList(type);
-  // };
 
   console.log(ledgerList, "ledgerList");
 
@@ -668,7 +662,7 @@ const TransactionPage = () => {
     d.createdAt = moment(d.createdAt).format("MMM DD YYYY h:mm A");
     return d;
   });
-  console.log(pendData, "pending");
+  console.log(csvData3, "csvData3");
   return (
     <>
       <Header />
