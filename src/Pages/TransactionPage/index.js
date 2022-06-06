@@ -48,6 +48,7 @@ const TransactionPage = () => {
   const [date3, setDate3] = useState("");
   const [checked, setChecked] = useState(false);
   const [ledgerList, setLedgerList] = useState([]);
+
   const headers = [
     { label: "Transaction Id(Vendor)", key: "transId" },
     { label: "Date", key: "createdAt" },
@@ -60,6 +61,17 @@ const TransactionPage = () => {
     { label: "Route", key: "route" },
   ];
 
+  const headerss = [
+    { label: "Date", key: "createdAt" },
+    { label: "Our Referrance No.", key: "refNo" },
+    { label: "Amount", key: "amount" },
+    { label: "Email", key: "email" },
+    { label: "Status", key: "status" },
+    { label: "UTR NO.", key: "utrNo" },
+    { label: "Narration", key: "product" },
+    { label: "Transaction Type", key: "transType" },
+  ];
+
   useEffect(() => {
     handleTransaction();
     handleBalanceList();
@@ -67,30 +79,26 @@ const TransactionPage = () => {
     handleLedgerList();
   }, []);
 
-
-
   useEffect(() => {
     if (transactionsList && Object.keys(transactionsList).length > 0) {
-    
       let data = transactionsList.filter(
         (item) =>
           item?.status?.toLowerCase() === "pending" ||
           item?.status?.toLowerCase() === "inprogress"
       );
       setPendData(data);
-      }
+    }
     console.log(transactionsList, "lastJsonMessagerathore");
   }, [transactionsList]);
 
   useEffect(() => {
     if (transferList && Object.keys(transferList).length > 0) {
-
-    let data = transferList.filter(
-      (item) =>
-        moment(item?.createdAt).format("YYYY-MM-DD") ==
-        moment(new Date()).format("YYYY-MM-DD")
-    );
-    setSuccess(data);
+      let data = transferList.filter(
+        (item) =>
+          moment(item?.createdAt).format("YYYY-MM-DD") ==
+          moment(new Date()).format("YYYY-MM-DD")
+      );
+      setSuccess(data);
     }
     console.log(transferList, "lastJsonMessagerathore");
   }, [transferList]);
@@ -98,7 +106,7 @@ const TransactionPage = () => {
   const handleTransaction = async () => {
     LoaderHelper.loaderStatus(true);
     await AuthService.getTransactions().then(async (result) => {
-      console.log(result, 'getTransactions');
+      console.log(result, "getTransactions");
       if (Object.keys(result).length > 1) {
         try {
           LoaderHelper.loaderStatus(false);
@@ -370,16 +378,12 @@ const TransactionPage = () => {
       }
     });
 
-   if (type1 === "success") {
+    if (type1 === "success") {
       setSuccess(type);
     } else if (type1 === "ledger") {
       setLedgerList(type2);
     }
-
-
   }
-
-
 
   const linkFollow = (cell, row, rowIndex, formatExtraData) => {
     return (
@@ -522,8 +526,6 @@ const TransactionPage = () => {
     );
   };
 
-
-
   const columns = [
     // uType == 1
     //   ? { dataField: "select", text: "Select", formatter: linkFollow }
@@ -659,6 +661,12 @@ const TransactionPage = () => {
     d.createdAt = moment(d.createdAt).format("MMM DD YYYY h:mm A");
     return d;
     // return Object.keys(d) == "createdAt" ? moment(d).format("YYYY-MM-DD") : "";
+  });
+
+  const csvData3 = ledgerList.map((d) => {
+    console.log(d.createdAt);
+    d.createdAt = moment(d.createdAt).format("MMM DD YYYY h:mm A");
+    return d;
   });
   console.log(pendData, "pending");
   return (
@@ -981,10 +989,10 @@ const TransactionPage = () => {
                     aria-labelledby="Ledger-tab"
                   >
                     <CSVLink
-                      data={balList}
+                      data={csvData3}
                       class="btn btn-dark   btn-block mb-3"
-                      // headers={headers}
-                      filename={`transList-${new Date()}.csv`}
+                      headers={headerss}
+                      filename={`LedgerList-${new Date()}.csv`}
                       style={{ float: "right" }}
                     >
                       Download me
