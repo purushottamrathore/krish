@@ -179,6 +179,7 @@ const TransactionPage = () => {
               item.creditAmount = item?.amount;
               bal = bal + item?.amount;
             }
+            item.bal=item.bal?.toFixed(2)
           });
           setLedgerList(result.reverse());
           // handleLedgerBal(result);

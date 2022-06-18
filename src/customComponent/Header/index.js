@@ -81,7 +81,7 @@ const Header = () => {
         {/* <button className="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button> */}
 
         {/* <img src="assets/img/logo_footer.png" className="img-fluid" /> */}
-        <h3 style={{ marginLeft: "70px" }}>Balance :- {userBal}</h3>
+        <h3 style={{ marginLeft: "70px" }}>Balance :- {parseFloat(userBal)?.toFixed(2)}</h3>
 
         <ul className="navbar-nav align-items-center ms-auto">
           <li className="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
