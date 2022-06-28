@@ -104,26 +104,26 @@ const TransactionPage = () => {
     console.log(transferList, "lastJsonMessagerathore");
   }, [transferList]);
 
-
- 
   const handleTransaction = async (startDate, endDate) => {
     LoaderHelper.loaderStatus(true);
-    await AuthService.getTransactions(startDate, endDate).then(async (result) => {
-      console.log(result, "getTransactions");
-      if (Object.keys(result).length > 1) {
-        try {
+    await AuthService.getTransactions(startDate, endDate).then(
+      async (result) => {
+        console.log(result, "getTransactions");
+        if (Object.keys(result).length > 1) {
+          try {
+            LoaderHelper.loaderStatus(false);
+            setTransactionsList(result);
+          } catch (error) {
+            LoaderHelper.loaderStatus(false);
+            //alertErrorMessage(error);
+            //console.log('error', `${error}`);
+          }
+        } else {
           LoaderHelper.loaderStatus(false);
-          setTransactionsList(result);
-        } catch (error) {
-          LoaderHelper.loaderStatus(false);
-          //alertErrorMessage(error);
-          //console.log('error', `${error}`);
+          //alertErrorMessage(result.message);
         }
-      } else {
-        LoaderHelper.loaderStatus(false);
-        //alertErrorMessage(result.message);
       }
-    });
+    );
   };
   const handleTransactionB = async () => {
     LoaderHelper.loaderStatus(true);
@@ -145,26 +145,25 @@ const TransactionPage = () => {
     });
   };
 
-    const handleTransactionC = async (from, to) => {
-      LoaderHelper.loaderStatus(true);
-      await AuthService.getTransactions(from, to).then(async (result) => {
-        //console.log(result.data, 'getTransactions');
-        if (Object.keys(result).length > 1) {
-          try {
-            LoaderHelper.loaderStatus(false);
-            setSuccess(result);
-          } catch (error) {
-            LoaderHelper.loaderStatus(false);
-            //alertErrorMessage(error);
-            //console.log('error', `${error}`);
-          }
-        } else {
+  const handleTransactionC = async (from, to) => {
+    LoaderHelper.loaderStatus(true);
+    await AuthService.getTransactions(from, to).then(async (result) => {
+      //console.log(result.data, 'getTransactions');
+      if (Object.keys(result).length > 1) {
+        try {
           LoaderHelper.loaderStatus(false);
-          //alertErrorMessage(result.message);
+          setSuccess(result);
+        } catch (error) {
+          LoaderHelper.loaderStatus(false);
+          //alertErrorMessage(error);
+          //console.log('error', `${error}`);
         }
-      });
-    };
-
+      } else {
+        LoaderHelper.loaderStatus(false);
+        //alertErrorMessage(result.message);
+      }
+    });
+  };
 
   const handleBalanceList = async () => {
     LoaderHelper.loaderStatus(true);
@@ -185,37 +184,37 @@ const TransactionPage = () => {
     });
   };
 
-  const handleTransactionD = async (startDate, endDate) => {
-    LoaderHelper.loaderStatus(true);
-    await AuthService.getTransactions(startDate, endDate).then(async (result) => {
-      console.log(result, "getTransactions");
-      if (Object.keys(result).length > 1) {
-        try {
-          LoaderHelper.loaderStatus(false);
-          setTransactionsList(result);
-          handleFilter();
-        } catch (error) {
-          LoaderHelper.loaderStatus(false);
-          //alertErrorMessage(error);
-          //console.log('error', `${error}`);
-        }
-      } else {
-        LoaderHelper.loaderStatus(false);
-        //alertErrorMessage(result.message);
-      }
-    });
-  };
+  // const handleTransactionD = async (startDate, endDate) => {
+  //   LoaderHelper.loaderStatus(true);
+  //   await AuthService.getTransactions(startDate, endDate).then(async (result) => {
+  //     console.log(result, "getTransactions");
+  //     if (Object.keys(result).length > 1) {
+  //       try {
+  //         LoaderHelper.loaderStatus(false);
+  //         setTransactionsList(result);
+  //         handleFilter();
+  //       } catch (error) {
+  //         LoaderHelper.loaderStatus(false);
+  //         //alertErrorMessage(error);
+  //         //console.log('error', `${error}`);
+  //       }
+  //     } else {
+  //       LoaderHelper.loaderStatus(false);
+  //       //alertErrorMessage(result.message);
+  //     }
+  //   });
+  // };
 
-  const handleFilter = () =>{
-    if (transactionsList && Object.keys(transactionsList).length > 0) {
-      let data = transactionsList.filter(
-        (item) =>
-          item?.status?.toLowerCase() === "pending" ||
-          item?.status?.toLowerCase() === "inprogress"
-      );
-      setPendData(data);
-    }
-  }
+  // const handleFilter = () =>{
+  //   if (transactionsList && Object.keys(transactionsList).length > 0) {
+  //     let data = transactionsList.filter(
+  //       (item) =>
+  //         item?.status?.toLowerCase() === "pending" ||
+  //         item?.status?.toLowerCase() === "inprogress"
+  //     );
+  //     setPendData(data);
+  //   }
+  // }
 
   var bal = 0;
 
@@ -235,7 +234,7 @@ const TransactionPage = () => {
               item.creditAmount = item?.amount;
               bal = bal + item?.amount;
             }
-            item.bal=item.bal?.toFixed(2)
+            item.bal = item.bal?.toFixed(2);
           });
           setLedgerList(result.reverse());
           // handleLedgerBal(result);
@@ -406,9 +405,9 @@ const TransactionPage = () => {
   console.log(checkList);
 
   function dateFilter(startDate, endDate, type1) {
-    console.log(type1); 
-    if(type1 === "pending"){
-      handleTransactionD(startDate, endDate);
+    console.log(type1);
+    if (type1 === "success") {
+      handleTransactionC(startDate, endDate);
     }
     // let type;
     // type = transactionsList.filter((e) => {
@@ -433,15 +432,12 @@ const TransactionPage = () => {
       }
     });
 
-
     // if (type1 === "success") {
     //   setSuccess(type);
-    // } else 
+    // } else
     if (type1 === "ledger") {
       setLedgerList(type2);
     }
-
-    
   }
 
   const linkFollow = (cell, row, rowIndex, formatExtraData) => {
