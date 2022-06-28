@@ -104,6 +104,8 @@ const TransactionPage = () => {
     console.log(transferList, "lastJsonMessagerathore");
   }, [transferList]);
 
+
+ 
   const handleTransaction = async (startDate, endDate) => {
     LoaderHelper.loaderStatus(true);
     await AuthService.getTransactions(startDate, endDate).then(async (result) => {
@@ -142,6 +144,28 @@ const TransactionPage = () => {
       }
     });
   };
+
+    const handleTransactionC = async (from, to) => {
+      LoaderHelper.loaderStatus(true);
+      await AuthService.getTransactions(from, to).then(async (result) => {
+        //console.log(result.data, 'getTransactions');
+        if (Object.keys(result).length > 1) {
+          try {
+            LoaderHelper.loaderStatus(false);
+            setSuccess(result);
+          } catch (error) {
+            LoaderHelper.loaderStatus(false);
+            //alertErrorMessage(error);
+            //console.log('error', `${error}`);
+          }
+        } else {
+          LoaderHelper.loaderStatus(false);
+          //alertErrorMessage(result.message);
+        }
+      });
+    };
+
+
   const handleBalanceList = async () => {
     LoaderHelper.loaderStatus(true);
     await AuthService.getBalanceList().then(async (result) => {
@@ -160,6 +184,38 @@ const TransactionPage = () => {
       }
     });
   };
+
+  const handleTransactionD = async (startDate, endDate) => {
+    LoaderHelper.loaderStatus(true);
+    await AuthService.getTransactions(startDate, endDate).then(async (result) => {
+      console.log(result, "getTransactions");
+      if (Object.keys(result).length > 1) {
+        try {
+          LoaderHelper.loaderStatus(false);
+          setTransactionsList(result);
+          handleFilter();
+        } catch (error) {
+          LoaderHelper.loaderStatus(false);
+          //alertErrorMessage(error);
+          //console.log('error', `${error}`);
+        }
+      } else {
+        LoaderHelper.loaderStatus(false);
+        //alertErrorMessage(result.message);
+      }
+    });
+  };
+
+  const handleFilter = () =>{
+    if (transactionsList && Object.keys(transactionsList).length > 0) {
+      let data = transactionsList.filter(
+        (item) =>
+          item?.status?.toLowerCase() === "pending" ||
+          item?.status?.toLowerCase() === "inprogress"
+      );
+      setPendData(data);
+    }
+  }
 
   var bal = 0;
 
@@ -350,17 +406,20 @@ const TransactionPage = () => {
   console.log(checkList);
 
   function dateFilter(startDate, endDate, type1) {
-    handleTransaction(startDate, endDate)
-    let type;
-    type = transactionsList.filter((e) => {
-      if (type1 === "success") {
-        return (
-          new Date(e.createdAt) >= new Date(startDate) &&
-          new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
-        );
-      }
-      //console.log(e, new Date(e.WorkDescription.startDate), this.filterStartDate);
-    });
+    console.log(type1); 
+    if(type1 === "pending"){
+      handleTransactionD(startDate, endDate);
+    }
+    // let type;
+    // type = transactionsList.filter((e) => {
+    //   if (type1 === "success") {
+    //     return (
+    //       new Date(e.createdAt) >= new Date(startDate) &&
+    //       new Date(e.createdAt) <= new Date(endDate).setHours(24, 0, 0, 0)
+    //     );
+    //   }
+    //   //console.log(e, new Date(e.WorkDescription.startDate), this.filterStartDate);
+    // });
 
     let type2;
     type2 = ledgerList.filter((e) => {
@@ -375,9 +434,10 @@ const TransactionPage = () => {
     });
 
 
-    if (type1 === "success") {
-      setSuccess(type);
-    } else if (type1 === "ledger") {
+    // if (type1 === "success") {
+    //   setSuccess(type);
+    // } else 
+    if (type1 === "ledger") {
       setLedgerList(type2);
     }
 
@@ -649,21 +709,21 @@ const TransactionPage = () => {
   };
 
   const csvData = pendData.map((d) => {
-    console.log(d.createdAt);
+    // console.log(d.createdAt);
     d.createdAt = moment(d.createdAt).format("MMM DD YYYY h:mm A");
     return d;
     // return Object.keys(d) == "createdAt" ? moment(d).format("YYYY-MM-DD") : "";
   });
   console.log(csvData);
   const csvData2 = success.map((d) => {
-    console.log(d.createdAt);
+    // console.log(d.createdAt);
     d.createdAt = moment(d.createdAt).format("MMM DD YYYY h:mm A");
     return d;
     // return Object.keys(d) == "createdAt" ? moment(d).format("YYYY-MM-DD") : "";
   });
 
   const csvData3 = ledgerList.map((d) => {
-    console.log(d.createdAt);
+    // console.log(d.createdAt);
     d.createdAt = moment(d.createdAt).format("MMM DD YYYY h:mm A");
     return d;
   });
