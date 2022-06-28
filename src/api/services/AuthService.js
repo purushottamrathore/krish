@@ -29,13 +29,16 @@ const AuthService = {
     return ApiCallPost(url, params, headers);
   },
 
-  getTransactions: async () => {
+  getTransactions: async (startDate, endDate) => {
     const token = localStorage.getItem("token");
     const { baseUrl, userTransactions } = ApiConfig;
 
     const url = baseUrl + userTransactions;
 
-    const params = {};
+    const params = {
+      from: startDate,
+      to: endDate,
+    };
 
     ConsoleLogs(TAG + ", getTransactions", `url : ' + ${url}`);
 
@@ -44,7 +47,7 @@ const AuthService = {
       Authorization: token,
     };
 
-    return ApiCallGET(url, params, headers);
+    return ApiCallPost(url, params, headers);
   },
 
   getActionTrans: async (id, transId, status, refId, password) => {

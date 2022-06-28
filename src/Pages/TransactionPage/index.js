@@ -104,9 +104,9 @@ const TransactionPage = () => {
     console.log(transferList, "lastJsonMessagerathore");
   }, [transferList]);
 
-  const handleTransaction = async () => {
+  const handleTransaction = async (startDate, endDate) => {
     LoaderHelper.loaderStatus(true);
-    await AuthService.getTransactions().then(async (result) => {
+    await AuthService.getTransactions(startDate, endDate).then(async (result) => {
       console.log(result, "getTransactions");
       if (Object.keys(result).length > 1) {
         try {
@@ -350,6 +350,7 @@ const TransactionPage = () => {
   console.log(checkList);
 
   function dateFilter(startDate, endDate, type1) {
+    handleTransaction(startDate, endDate)
     let type;
     type = transactionsList.filter((e) => {
       if (type1 === "success") {
@@ -373,11 +374,14 @@ const TransactionPage = () => {
       }
     });
 
+
     if (type1 === "success") {
       setSuccess(type);
     } else if (type1 === "ledger") {
       setLedgerList(type2);
     }
+
+    
   }
 
   const linkFollow = (cell, row, rowIndex, formatExtraData) => {
