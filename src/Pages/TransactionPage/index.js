@@ -63,6 +63,7 @@ const TransactionPage = () => {
 
   const headerss = [
     { label: "Date", key: "createdAt" },
+    { label: "Operator No", key: "customer" },
     { label: "Our Referrance No.", key: "refNo" },
     { label: "Email", key: "email" },
     { label: "Status", key: "status" },
